@@ -1,0 +1,51 @@
+::ng-deep .mat-mdc-tab-group > .mat-mdc-tab-header {
+  display: none;
+}
+div.col-xl-9,
+div.col-xl-6,
+div.col-xl-3,
+div.col-xl-2,
+div.col-xl-8,
+div.col-xl-4 {
+  margin-top: -25px;
+}
+
+mat-option,
+button,
+optSelect,
+mat-select {
+  font-family: "Cairo", serif;
+}
+
+p span {
+  display: block;
+}
+mat-header-cell {
+  font-weight: bolder;
+}
+.mat-column-seq {
+  flex: 0 0 50px;
+}
+
+.optSelect {
+  font-size: large;
+  display: block;
+}
+
+mat-radio-button {
+  display: block;
+}
+
+.denar {
+  display: block;
+  color: orangered;
+}
+.dollar {
+  display: block;
+  color: green;
+}
+
+div h5 span {
+  display: block;
+  text-align: center;
+}

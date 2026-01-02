@@ -1,0 +1,16 @@
+.myColor {
+  color: orangered;
+}
+
+.passwordWarnning {
+  color: red;
+  margin-top: 40px;
+  width: 100%;
+  text-align: left;
+}
+
+@media (max-width: 991.98px) {
+  .passwordWarnning {
+    font-size: 70%;
+  }
+}

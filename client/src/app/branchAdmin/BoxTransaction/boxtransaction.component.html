@@ -1,0 +1,1279 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="title"> </app-breadcrumb>
+    </div>
+
+    <div class="">
+      <mat-tab-group [selectedIndex]="selectedIndex">
+        <mat-tab label="1">
+          <div class="row" style="width: 99%">
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12"></div>
+
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+              <div style="display: flex; justify-content: center">
+                <p class="fs-5 fw-bold">
+                  الرصيد الحالي للصندوق :
+                  <span [style.color]="boxBalance.denar < 0 ? 'red' : ''">
+                    {{ boxBalance.denar | number }} دع</span
+                  >
+                </p>
+
+                <div class="m-r-20" matTooltip="تفاصيل اكثر">
+                  <button
+                    type="button"
+                    class="btn btn-info"
+                    (click)="moreDetailse()"
+                  >
+                    تفاصيل الرصيد
+                    <i class="fa fa-info"></i>
+                  </button>
+                </div>
+
+                <div class="m-r-20" matTooltip="بداية الرصيد">
+                  <button
+                    type="button"
+                    class="btn btn-warning"
+                    (click)="initBalanceBox()"
+                  >
+                    بداية الرصيد
+                    <i class="bi bi-currency-dollar"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left ms-0">
+                    <li class="tbl-title">
+                      <h2>البحث</h2>
+                    </li>
+                    <li class="tbl-search-box">
+                      <label for="search-input">
+                        <i class="material-icons search-icon" matSuffix>
+                          search</i
+                        >
+                      </label>
+                      <input
+                        placeholder="اكتب شيء للبحث"
+                        type="text"
+                        matInput
+                        (keyup)="applyFilter($event)"
+                        class="browser-default search-field"
+                        aria-label="Search box"
+                      />
+                    </li>
+
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="  بحث متقدم">
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          (click)="onAdvaceSearch()"
+                        >
+                          <i class="bi bi-binoculars-fill"></i>
+                          بحث متقدم
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn m-l-10">
+                      <h6>المجموع {{ totalMoney | number }} دع</h6>
+                    </li>
+
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" تسجيل حركة حسابات">
+                        <button
+                          type="button"
+                          class="btn btn-warning"
+                          (click)="addNew()"
+                        >
+                          <i class="fa fa-plus"></i>
+                          تسجيل حركة حسابات
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body overflow-auto">
+                <div *ngIf="showAdvanceSearch" class="row move11">
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label> تاريخ البحث من </mat-label>
+                      <input
+                        matInput
+                        class="fs-5"
+                        [matDatepicker]="picker1"
+                        [(ngModel)]="dateSearchFrom"
+                        (focus)="picker1.open()"
+                        required
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker1"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker1></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label> تاريخ البحث الى </mat-label>
+                      <input
+                        matInput
+                        class="fs-5"
+                        [matDatepicker]="picker2"
+                        [(ngModel)]="dateSearchTo"
+                        (focus)="picker2.open()"
+                        required
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker2"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker2></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-6 col-sm-6"
+                    matTooltip=" بحث   خلال فترة"
+                  >
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      (click)="doSearch()"
+                      [disabled]="dateSearchTo === '' || dateSearchFrom === ''"
+                    >
+                      <i class="fa fa-search"></i>
+                      بحث
+                    </button>
+                  </div>
+                </div>
+
+                <div class="responsive_table">
+                  <table
+                    mat-table
+                    [dataSource]="dataSource"
+                    class="mat-cell advance-table"
+                  >
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ paginator.pageIndex * paginator.pageSize + i + 1 }}
+                      </mat-cell> </ng-container
+                    ><ng-container matColumnDef="fromText">
+                      <mat-header-cell *matHeaderCellDef>
+                        من حساب
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> من حساب:</span>
+                        {{ row.fromText }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fromAmount">
+                      <mat-header-cell *matHeaderCellDef>
+                        المبلغ من
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> المبلغ من:</span>
+                        <span [style.color]="row.fromAmount < 0 ? 'red' : ''">
+                          {{ row.fromAmount | number }} دع</span
+                        >
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="toAmount">
+                      <mat-header-cell *matHeaderCellDef>
+                        المبلغ الى
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> المبلغ الى:</span>
+
+                        <span [style.color]="row.toAmount < 0 ? 'red' : ''">
+                          {{ row.toAmount | number }} دع</span
+                        >
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="toText">
+                      <mat-header-cell *matHeaderCellDef>
+                        الى حساب
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الى حساب</span>
+                        {{ row.toText }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="transactionDate">
+                      <mat-header-cell *matHeaderCellDef>
+                        التاريخ
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> التاريخ:</span>
+                        <p class="d-flex flex-column">
+                          <span>
+                            {{ row.transactionDate | date : "yyyy-MM-dd" }}
+                          </span>
+                          {{ row.dateAt | date : "yyyy-MM-dd hh:mm a" }}
+                        </p>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="comments">
+                      <mat-header-cell *matHeaderCellDef>
+                        الملاحظات
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الملاحظات:</span>
+                        {{ row.comments }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="userTitle">
+                      <mat-header-cell *matHeaderCellDef>
+                        الموظف
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الموظف:</span>
+                        {{ row.userTitle }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                      <mat-header-cell *matHeaderCellDef class="pr-0"
+                        >الاجراء</mat-header-cell
+                      >
+                      <mat-cell
+                        *matCellDef="let row; let i = index"
+                        class="pr-0"
+                      >
+                        <div *ngIf="!row.fatora">
+                          <button
+                            *ngIf="curUser.auth === row.userAuth"
+                            mat-icon-button
+                            (click)="$event.stopPropagation(); editCall(row)"
+                            matTooltip="تعديل"
+                          >
+                            <app-feather-icons
+                              [icon]="'edit'"
+                              [class]="'tbl-fav-edit'"
+                            >
+                            </app-feather-icons>
+                          </button>
+                          <button
+                            mat-icon-button
+                            *ngIf="curUser.auth === row.userAuth"
+                            (click)="
+                              $event.stopPropagation(); deleteItem(i, row)
+                            "
+                            matTooltip="حذف"
+                          >
+                            <app-feather-icons
+                              [icon]="'trash-2'"
+                              [class]="'tbl-fav-delete'"
+                            >
+                            </app-feather-icons>
+                          </button>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+                    <mat-header-row
+                      *matHeaderRowDef="displayedColumns"
+                    ></mat-header-row>
+                    <mat-row
+                      *matRowDef="let row; columns: displayedColumns"
+                      (click)="showInfo(row)"
+                      [style.cursor]="'pointer'"
+                      matRipple
+                    >
+                    </mat-row>
+                  </table>
+                  <!-- Loading spinner -->
+                  <div *ngIf="showSpinner" class="tbl-spinner">
+                    <mat-progress-spinner
+                      color="accent"
+                      [diameter]="40"
+                      mode="indeterminate"
+                    >
+                    </mat-progress-spinner>
+                  </div>
+                  <div
+                    *ngIf="showSpinner"
+                    class="no-results"
+                    [style.display]="
+                      dataSource.filteredData.length === 0 ? '' : 'none'
+                    "
+                  >
+                    No results
+                  </div>
+                  <mat-paginator
+                    #paginator
+                    [length]="dataSource.filteredData.length"
+                    [pageIndex]="0"
+                    [pageSize]="10"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                  >
+                  </mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="2" *ngIf="selectedIndex === 1">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div>
+                  <div class="row">
+                    <div
+                      class="col-xl-4 col-lg-4 col-md-12 col-sm-12 border rounded-2"
+                    >
+                      <mat-radio-group
+                        name="frominput"
+                        [(ngModel)]="fromSelect"
+                        (change)="raidChangeFrom($event.value)"
+                      >
+                        <mat-radio-button value="fromAgent">
+                          <span class="optSelect">من عميل </span>
+                        </mat-radio-button>
+
+                        <mat-radio-button value="fromBox">
+                          <span class="optSelect">من الصندوف</span>
+                        </mat-radio-button>
+                      </mat-radio-group>
+
+                      <app-my-auto-complete
+                        *ngIf="fromSelect === 'fromAgent'"
+                        placeholder="من  عميل "
+                        [itemsList]="fromAgentList"
+                        [initValue]="varBTrx.fromAgent"
+                        (outputValue)="fromAgentFN($event)"
+                        [disabled]="fromAgentEvent.asObservable()"
+                        dataKey="title"
+                      ></app-my-auto-complete>
+                    </div>
+
+                    <div
+                      class="col-xl-4 col-lg-4 col-md-12 col-sm-12 border rounded-2"
+                    >
+                      <mat-radio-group
+                        name="toinput"
+                        [(ngModel)]="toSelect"
+                        (change)="raidChangeTo($event.value)"
+                      >
+                        <mat-radio-button value="toAgent">
+                          <span class="optSelect"> الى عميل </span>
+                        </mat-radio-button>
+
+                        <mat-radio-button value="category">
+                          <span class="optSelect"> الى مصاريف </span>
+                        </mat-radio-button>
+
+                        <mat-radio-button value="toBox">
+                          <span class="optSelect">الى الصندوف</span>
+                        </mat-radio-button>
+                      </mat-radio-group>
+
+                      <app-my-auto-complete
+                        *ngIf="toSelect === 'category'"
+                        placeholder="الى مصاريف"
+                        [itemsList]="categoryList"
+                        [initValue]="varBTrx.category"
+                        (outputValue)="categoryFN($event)"
+                        [disabled]="categoryEvent.asObservable()"
+                        dataKey="title"
+                      ></app-my-auto-complete>
+
+                      <app-my-auto-complete
+                        *ngIf="toSelect === 'toAgent'"
+                        placeholder="الى  عميل "
+                        [itemsList]="toAgentList"
+                        [initValue]="varBTrx.toAgent"
+                        (outputValue)="toAgentFN($event)"
+                        [disabled]="toAgentEvent.asObservable()"
+                        dataKey="title"
+                      ></app-my-auto-complete>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                      <mat-form-field
+                        class="example-full-width"
+                        appearance="outline"
+                      >
+                        <mat-label>التاريخ</mat-label>
+                        <input
+                          class="fs-4 fw-1"
+                          matInput
+                          [matDatepicker]="picker16"
+                          [(ngModel)]="varBTrx.transactionDate"
+                          (focus)="picker16.open()"
+                          required
+                        />
+                        <mat-datepicker-toggle
+                          matSuffix
+                          [for]="picker16"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #picker16></mat-datepicker>
+                      </mat-form-field>
+                      <mat-form-field
+                        class="example-full-width"
+                        appearance="outline"
+                      >
+                        <mat-label class=""> المبلغ </mat-label>
+
+                        <input
+                          inputWithComma
+                          matInput
+                          class="fs-4 fw-1"
+                          type="text"
+                          [(ngModel)]="varBTrx.fromAmountComma"
+                          (input)="
+                            varBTrx.fromAmount = varBTrx.fromAmountComma
+                              .split(',')
+                              .join('');
+                            varBTrx.toAmount = varBTrx.fromAmount;
+                            varBTrx.toAmountComma = varBTrx.fromAmount
+                          "
+                          placeholder="المبلغ "
+                          required
+                          (keyup.enter)="
+                            varBTrx.fromAmount = varBTrx.fromAmount * 1000;
+                            varBTrx.toAmount = varBTrx.fromAmount;
+                            varBTrx.toAmountComma = varBTrx.fromAmount;
+                            varBTrx.fromAmountComma = varBTrx.fromAmount
+                          "
+                        />
+
+                        <mat-icon matSuffix> دع </mat-icon>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12"></div>
+
+                    <div
+                      *ngIf="false"
+                      class="col-xl-4 col-lg-4 col-md-12 col-sm-12"
+                    >
+                      <mat-form-field
+                        class="example-full-width"
+                        appearance="outline"
+                      >
+                        <mat-label> المبلغ الى </mat-label>
+
+                        <input
+                          inputWithComma
+                          matInput
+                          type="text"
+                          [(ngModel)]="varBTrx.toAmountComma"
+                          (input)="
+                            varBTrx.toAmount = varBTrx.toAmountComma
+                              .split(',')
+                              .join('')
+                          "
+                          placeholder="المبلغ الى"
+                          (keyup.enter)="
+                            varBTrx.toAmount = varBTrx.toAmount * 1000;
+                            varBTrx.toAmountComma = varBTrx.toAmount
+                          "
+                          required
+                        />
+
+                        <mat-icon matSuffix> دع </mat-icon>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12"></div>
+                  </div>
+
+                  <div class="row"></div>
+
+                  <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                      <mat-form-field
+                        class="example-full-width"
+                        appearance="outline"
+                      >
+                        <mat-label>الملاحظات</mat-label>
+                        <textarea
+                          matInput
+                          [(ngModel)]="varBTrx.comments"
+                          class="description-area fs-4"
+                        >
+                        </textarea>
+                      </mat-form-field>
+                    </div>
+                    <div
+                      *ngIf="false"
+                      class="col-xl-6 col-lg-6 col-md-12 col-sm-12"
+                    >
+                      <!-- المستندات -->
+                      <div class="row">
+                        <h6 class="social-login-title">صورة المستندات</h6>
+                        <div
+                          *ngFor="let x of varBTrx.documents; index as i"
+                          class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-2 d-flex justify-content-center"
+                        >
+                          <div class="img-container position-relative">
+                            <span
+                              role="button"
+                              matTooltip="حذف الصورة"
+                              class="position-absolute delete-icon-container"
+                              style="color: red"
+                              (click)="removeResetPicture(i)"
+                            >
+                              <mat-icon>cancel</mat-icon>
+                            </span>
+
+                            <img
+                              [src]="x?.obj?.value"
+                              class="img-thumbnail rounded"
+                              (click)="imgClick(x)"
+                            />
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div
+                            class="file-btn-container container-auth-form-btn"
+                          >
+                            <button
+                              mat-raised-button
+                              type="button"
+                              color="primary"
+                              class="btn-space"
+                              (click)="selectPicture.click()"
+                            >
+                              <i class="bi bi-window-plus"></i>
+
+                              اضافة صورة من الملفات
+                            </button>
+
+                            <input
+                              #selectPicture
+                              type="file"
+                              accept="image/*"
+                              onclick="this.value = null"
+                              (change)="
+                                resetFromLocalFiles(selectPicture.files)
+                              "
+                              style="display: none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                      <button
+                        class="btn-space"
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="
+                          varBTrx.fromAmount === undefined ||
+                          varBTrx.toAmount === undefined ||
+                          varBTrx.transactionDate === undefined ||
+                          isValid() ||
+                          showSpinner
+                        "
+                        (click)="onSubmit()"
+                      >
+                        حفظ البيانات
+                      </button>
+                      <button
+                        type="button"
+                        mat-raised-button
+                        color="warn"
+                        (click)="selectedIndex = 0"
+                      >
+                        الغاء
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="3">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>
+                      {{ caption }}
+
+                      <span [style.color]="boxBalance.denar < 0 ? 'red' : ''">
+                        {{ boxBalance.denar | number }} دع</span
+                      >
+                    </h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="overflow-auto">
+                  <div class="responsive_table">
+                    <table
+                      mat-table
+                      [dataSource]="dsBoxDet"
+                      class="mat-cell advance-table"
+                    >
+                      <ng-container matColumnDef="seq">
+                        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                        <mat-cell *matCellDef="let row; let i = index">
+                          <span class="mobile-label"> التسلسل:</span>
+
+                          {{
+                            pagBoxDetails.pageIndex * pagBoxDetails.pageSize +
+                              i +
+                              1
+                          }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="denar">
+                        <mat-header-cell *matHeaderCellDef>
+                          الرصيد
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الرصيد :</span>
+                          <span [style.color]="row.denar < 0 ? 'red' : ''">
+                            {{ row.denar | number }} دع</span
+                          >
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="dollar">
+                        <mat-header-cell *matHeaderCellDef>
+                          الرصيد
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الرصيد :</span>
+                          <span class="dollar">
+                            {{ row.dollar | number }} $
+                          </span>
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="amount">
+                        <mat-header-cell *matHeaderCellDef>
+                          المبلغ
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> المبلغ :</span>
+                          <span [style.color]="row.amount < 0 ? 'red' : ''">
+                            {{ row.amount | number }} دع</span
+                          >
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="inOut">
+                        <mat-header-cell *matHeaderCellDef>
+                          العملية
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> العملية</span>
+                          {{ row.inOut }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="toFrom">
+                        <mat-header-cell *matHeaderCellDef>
+                          الجهة
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الجهة</span>
+                          {{ row.toFrom }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="toText">
+                        <mat-header-cell *matHeaderCellDef>
+                          الى حساب
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الى حساب</span>
+                          {{ row.toText }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="date">
+                        <mat-header-cell *matHeaderCellDef>
+                          التاريخ
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> التاريخ:</span>
+                          {{ row.date | date : "yyyy-MM-dd" }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="comments">
+                        <mat-header-cell *matHeaderCellDef>
+                          الملاحظات
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الملاحظات:</span>
+                          {{ row.comments }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <mat-header-row
+                        *matHeaderRowDef="dipBoxDetaise"
+                      ></mat-header-row>
+                      <mat-row
+                        *matRowDef="let row; columns: dipBoxDetaise"
+                        (click)="showInfo(row)"
+                        [style.cursor]="'pointer'"
+                        matRipple
+                      >
+                      </mat-row>
+                    </table>
+
+                    <mat-paginator
+                      #pagBoxDetails
+                      [length]="dsBoxDet.data.length"
+                      [pageIndex]="0"
+                      [pageSize]="10"
+                      [pageSizeOptions]="[5, 10, 25, 100]"
+                    >
+                    </mat-paginator>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="2" *ngIf="selectedIndex === 4">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="row">
+                  <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label> بداية الرصيد بالدينار </mat-label>
+                      <input
+                        matInput
+                        type="number"
+                        [(ngModel)]="initDenar"
+                        placeholder="بداية الرصيد بالدينار"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                    <button
+                      class="btn-space"
+                      (click)="onSaveChange()"
+                      mat-raised-button
+                      color="primary"
+                    >
+                      حفظ التغييرات
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="2" *ngIf="selectedIndex === 5">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="d-flex justify-content-center">
+                  <div style="width: auto">
+                    <table class="table table-hover table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col">اسم الحساب</th>
+                          <th scope="col">المبلغ بالدينار</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>الصندوق</td>
+                          <td>
+                            <span
+                              [style.color]="boxBalance.denar < 0 ? 'red' : ''"
+                            >
+                              {{ boxBalance.denar | number }} دع
+                            </span>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>المخزن</td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="storspinner"
+                            ></span>
+
+                            <span *ngIf="!storspinner" class="denar">
+                              {{ storDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="storspinner"
+                            ></span>
+                            <span *ngIf="!storspinner" class="dollar">
+                              {{ storDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>العملاء</td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="agentpinner"
+                            ></span>
+                            <span *ngIf="!agentpinner" class="denar">
+                              {{ agentDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="agentpinner"
+                            ></span>
+                            <span *ngIf="!agentpinner" class="dollar">
+                              {{ agentDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>الزبائن</td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="customerpinner"
+                            ></span>
+                            <span *ngIf="!customerpinner" class="denar">
+                              {{ customerDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="customerpinner"
+                            ></span>
+                            <span *ngIf="!customerpinner" class="dollar">
+                              {{ customerDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>حسابات اخرى</td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="otherAccpinner"
+                            ></span>
+                            <span *ngIf="!otherAccpinner" class="denar">
+                              {{ otherAccDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="otherAccpinner"
+                            ></span>
+                            <span *ngIf="!otherAccpinner" class="dollar">
+                              {{ otherAccDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>الفرع الرئيسي</td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="mBranchpinner"
+                            ></span>
+                            <span *ngIf="!mBranchpinner" class="denar">
+                              {{ mBranchDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              class="spinner-border text-primary spinner-border-sm"
+                              *ngIf="mBranchpinner"
+                            ></span>
+                            <span *ngIf="!mBranchpinner" class="dollar">
+                              {{ mBranchDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>صافي المجموع</td>
+                          <td>
+                            <span class="denar">
+                              {{ totalDenar | number }}
+                              دع
+                            </span>
+                          </td>
+                          <td>
+                            <span class="dollar">
+                              {{ totalDollar | number }}
+                              $
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="2" *ngIf="selectedIndex === 6">
+          <div>
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"> </i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label>تاريخ الحساب من:</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="pickerFrom"
+                        [(ngModel)]="dtFrom"
+                        (focus)="pickerFrom.open()"
+                        required
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="pickerFrom"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #pickerFrom></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label>تاريخ الحساب من:</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="pickerTo"
+                        [(ngModel)]="dtTo"
+                        (focus)="pickerTo.open()"
+                        required
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="pickerTo"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #pickerTo></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                    <button
+                      type="button"
+                      class="btn btn-info"
+                      [disabled]="dtTo === '' || dtFrom === ''"
+                      (click)="calculateProfit()"
+                      style="height: 75%"
+                    >
+                      عرض النتائج <i class="fa fa-search"> </i>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <span
+                    class="spinner-border text-primary spinner-border-sm"
+                    *ngIf="profitSpinner"
+                  ></span>
+
+                  <div *ngIf="!profitSpinner && theProfits" style="width: auto">
+                    <table class="table table-hover table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col">اسم الحساب</th>
+                          <th scope="col">المبلغ بالدينار</th>
+                          <th scope="col">المبلغ بالدولار</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>المبيعات</td>
+                          <td>
+                            <span class="denar">
+                              {{ theProfits.salesDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span class="dollar"> {{ 0 | number }} $ </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>كافة المواد</td>
+                          <td>
+                            <span class="denar">
+                              {{ theProfits.costDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span class="dollar"> {{ 0 | number }} $ </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>المصاريف</td>
+                          <td>
+                            <span class="denar">
+                              {{ theProfits.expencessDenar | number }} دع
+                            </span>
+                          </td>
+                          <td>
+                            <span class="dollar">
+                              {{ theProfits.expencessDollar | number }} $
+                            </span>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>صافي الارباح</td>
+                          <td>
+                            <span class="denar">
+                              {{ denarProfits | number }}
+                              دع
+                            </span>
+                          </td>
+                          <td>
+                            <span class="dollar">
+                              {{ dollarProfits | number }}
+                              $
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div *ngIf="!profitSpinner && theProfits">
+                  <div class="row">
+                    <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                      <h5><strong>المبيعات</strong></h5>
+
+                      <table
+                        class="table table-hover table-bordered border-primary"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">اسم المادة</th>
+                            <th scope="col">العدد</th>
+                            <th scope="col">الشراء</th>
+                            <th scope="col">البيع</th>
+                            <th scope="col">الايرادات</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let x of theProfits!.fatoraItemsList;
+                              let i = index
+                            "
+                          >
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ x.materialTitle }}</td>
+                            <td>{{ x.quantity | number }}</td>
+                            <td>{{ x.unitCostPrice | number }}</td>
+                            <td>{{ x.salePrice | number }}</td>
+                            <td>
+                              {{
+                                x.quantity * (x.salePrice - x.unitCostPrice)
+                                  | number
+                              }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                      <h5><strong>المصاريف</strong></h5>
+
+                      <table
+                        class="table table-hover table-bordered border-primary"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">اسم التبويب</th>
+                            <th scope="col">المبلغ</th>
+                            <th scope="col">التاريخ</th>
+                            <th scope="col">الملاحظات</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let x of theProfits!.boxTrans;
+                              let i = index
+                            "
+                          >
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ x.categoryTitle }}</td>
+                            <td>
+                              <span *ngIf="x.fromCurrency" class="denar">
+                                {{ x.fromAmount | number }} دع
+                              </span>
+
+                              <span *ngIf="!x.fromCurrency" class="dollar">
+                                {{ x.fromAmount | number }} $
+                              </span>
+                            </td>
+                            <td>{{ x.transactionDate }}</td>
+                            <td>{{ x.comments }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,81 @@
+<div class="addContainer">
+  <div class="modalHeader clearfix">
+    <div class="editRowModal">
+      <div class="modalHeader clearfix">
+        <div class="modal-about">
+          <strong> ترحيل ارصدة الحسابات</strong>
+        </div>
+      </div>
+    </div>
+    <button
+      mat-icon-button
+      (click)="dialogRef.close()"
+      class="modal-close-button"
+      aria-label="Close dialog"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="alert alert-warning" role="alert">
+    سيتم ترحيل الارصدة للحسابات المحددة من السنة السابقة ولا يمكن التراجع عن هذا
+    الاجراء
+  </div>
+  <div mat-dialog-content class="carioFomt">
+    <div class="row">
+      <div class="col-xl-12 col-lg-13 col-md-12 col-sm-12 mb-2">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الحساب</th>
+              <th>اجراء الترحيل</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let x of dsRows; let i = index">
+              <th>{{ i + 1 }}</th>
+              <td>{{ x.title }}</td>
+              <td>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  (click)="migrate(x)"
+                  [disabled]="x.showSpinner"
+                >
+                  ترحيل
+                  <span
+                    *ngIf="x.showSpinner"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="example-button-row" align="start"></div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="example-button-row" align="end">
+          <button
+            mat-raised-button
+            color="warn"
+            class="tabstop"
+            (click)="onNoClick()"
+            [mat-dialog-close]="2"
+          >
+            غلق النافذة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

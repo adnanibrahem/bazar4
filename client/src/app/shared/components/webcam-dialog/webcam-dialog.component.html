@@ -1,0 +1,47 @@
+<mat-card>
+  <mat-card-header>قم بألتقاط صورة</mat-card-header>
+  <mat-card-content>
+    <webcam
+      [height]="webCamHeight"
+      [width]="webCamWidth"
+      [trigger]="triggerObservable"
+      (imageCapture)="handleImage($event)"
+      *ngIf="showWebcam"
+      [allowCameraSwitch]="allowCameraSwitch"
+      [switchCamera]="nextWebcamObservable"
+      [videoOptions]="videoOptions"
+      (cameraSwitched)="cameraWasSwitched($event)"
+      (initError)="handleInitError($event)"
+    ></webcam>
+  </mat-card-content>
+  <mat-card-footer>
+    <button
+      class="cancel mx-1"
+      matButton
+      size="small"
+      type="button"
+      status="danger"
+      (click)="cancel()"
+    >
+      إلغاء
+    </button>
+    <button
+      matButton
+      class="mx-1"
+      status="info"
+      size="small"
+      (click)="showNextWebcam(true)"
+    >
+      تبديل الكاميرا
+    </button>
+    <button
+      matButton
+      class="mx-1"
+      status="success"
+      size="small"
+      (click)="triggerSnapshot()"
+    >
+      إلتقاط
+    </button>
+  </mat-card-footer>
+</mat-card>

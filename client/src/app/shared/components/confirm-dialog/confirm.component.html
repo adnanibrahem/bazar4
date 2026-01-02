@@ -1,0 +1,21 @@
+<div class="container">
+  <h3 mat-dialog-title>{{ data.txt }}</h3>
+  <div mat-dialog-content>
+    <p dir="rtl">
+      {{ data.title }}
+    </p>
+  </div>
+  <div mat-dialog-actions class="mb-1">
+    <button
+      mat-flat-button
+      color="primary"
+      [mat-dialog-close]="1"
+      (click)="confirmDelete()"
+    >
+      نعم
+    </button>
+    <button mat-flat-button color="accent" (click)="onNoClick()" tabindex="-1">
+      كلا
+    </button>
+  </div>
+</div>

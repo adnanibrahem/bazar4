@@ -1,0 +1,206 @@
+<nav #navbar class="navbar active">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a
+        href="#"
+        onClick="return false;"
+        class="navbar-toggle collapsed"
+        (click)="isNavbarCollapsed = !isNavbarCollapsed"
+        aria-expanded="false"
+      ></a>
+      <a
+        href="#"
+        onClick="return false;"
+        class="bars"
+        (click)="mobileMenuSidebarOpen($event, 'overlay-open')"
+      ></a>
+      <a class="navbar-brand" routerLink="{{ homePage }}">
+        <img width="32" src="assets/images/logoBig.png" alt="" />
+        <span> الارض الخضراء لتدوير النفايات</span>
+      </a>
+      <!-- مشاريع التنمية الغذائية -->
+    </div>
+    <div
+      class="collapse navbar-collapse"
+      [ngClass]="isNavbarCollapsed ? '' : 'show'"
+    >
+      <ul class="float-start collapse-menu-icon">
+        <li>
+          <button
+            mat-button
+            (click)="callSidemenuCollapse()"
+            class="sidemenu-collapse nav-notification-icons"
+          >
+            <app-feather-icons
+              [icon]="'menu'"
+              [class]="'header-icon'"
+            ></app-feather-icons>
+          </button>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Select commeriseal year -->
+
+        <li class="nav-item">
+          <div>
+            <label>السنة التجارية</label>
+            <select
+              [(ngModel)]="curYear"
+              (ngModelChange)="OnSelectCommercialYear($event)"
+            >
+              <option *ngFor="let x of CommercialYearList" [value]="x.id">
+                {{ x.title }}
+              </option>
+            </select>
+          </div>
+
+          <!-- <mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>نوع الصلاحية </mat-label>
+            <mat-select >
+          
+            </mat-select>
+          </mat-form-field> -->
+
+          <!-- <button
+            mat-button
+            [matMenuTriggerFor]="languagemenu"
+            class="lang-dropdown nav-notification-icons"
+          >
+            <img
+              *ngIf="flagvalue !== undefined"
+              src="{{ flagvalue }}"
+              height="16"
+            />
+            <img
+              *ngIf="flagvalue === undefined"
+              src="{{ defaultFlag }}"
+              height="16"
+            />
+          </button> -->
+
+          <!-- <mat-menu #languagemenu="matMenu" class="lang-item-menu">
+            <div *ngFor="let item of listLang" class="lang-item">
+              <button
+                mat-menu-item
+                class="dropdown-item lang-item-list"
+                (click)="setLanguage(item.text, item.lang, item.flag)"
+                [ngClass]="{ active: langStoreValue === item.lang }"
+              >
+                <img src="{{ item.flag }}" class="flag-img" height="12" />
+                <span class="align-middle">{{ item.text }}</span>
+              </button>
+            </div>
+          </mat-menu> -->
+        </li>
+        <!-- end select commeriseal year  -->
+        <!-- Full Screen Button -->
+        <li class="fullscreen">
+          <button
+            mat-button
+            class="nav-notification-icons"
+            (click)="callFullscreen()"
+          >
+            <app-feather-icons
+              [icon]="'maximize'"
+              [class]="'header-icon'"
+            ></app-feather-icons>
+          </button>
+        </li>
+        <!-- #END# Full Screen Button -->
+
+        <li class="nav-item">
+          <button mat-button (click)="onThemeClick()">
+            <mat-icon *ngIf="theme === 'dark'" style="color: white"
+              >light_mode</mat-icon
+            >
+            <mat-icon *ngIf="theme === 'light'">dark_mode</mat-icon>
+          </button>
+        </li>
+
+        <!-- #START# Notifications-->
+        <li class="nav-item btnNotification" ngbDropdown></li>
+
+        <!-- #END# Notifications-->
+        <li class="nav-item user_profile">
+          <button mat-button [matMenuTriggerFor]="profilemenu">
+            <div class="chip dropdown-toggle" ngbDropdownToggle class="">
+              <span>{{ userFullName }}</span>
+              <img
+                src="{{ userImg }}"
+                class="user_img"
+                width="32"
+                height="32"
+                alt="User"
+              />
+            </div>
+          </button>
+          <mat-menu #profilemenu="matMenu" class="profile-menu">
+            <div class="noti-list">
+              <div class="menu">
+                <div class="user_dw_menu">
+                  <!-- <button mat-menu-item class="user-item-list">
+                    <app-feather-icons
+                      [icon]="'user'"
+                      [class]="'user-menu-icons'"
+                    ></app-feather-icons
+                    >Account
+                  </button> -->
+
+                  <button
+                    mat-menu-item
+                    (click)="personalInfo()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'settings'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
+                    <label class="myFont"> الملف الشخصي </label>
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    (click)="changePassword()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'repeat'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
+                    <label class="myFont"> تغغير كلمة المرور </label>
+                  </button>
+
+                  <button
+                    *ngIf="privilege === 'admin'"
+                    mat-menu-item
+                    (click)="BalanceMigration()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'corner-up-right'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
+                    <label class="myFont"> ترحيل الارصدة </label>
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    (click)="logout()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'log-out'"
+                      [class]="'user-menu-icons  sidebarIconColor'"
+                    ></app-feather-icons>
+                    <label class="myFont">تسجيل الخروج</label>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-menu>
+        </li>
+        <!-- #END# Tasks -->
+      </ul>
+    </div>
+  </div>
+</nav>

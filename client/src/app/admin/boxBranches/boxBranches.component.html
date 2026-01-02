@@ -1,0 +1,657 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="title"> </app-breadcrumb>
+    </div>
+
+    <div>
+      <mat-tab-group [selectedIndex]="selectedIndex">
+        <mat-tab label="1">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div
+              *ngIf="false"
+              class="p-2"
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+              "
+            >
+              <div>
+                <h5>
+                  <span>مجموع الصندوق </span>
+                  {{ boxDenar | number }} دع
+                </h5>
+              </div>
+              <div>
+                <h5>
+                  <span>مجموع الوكلاء </span>
+                  {{ agentDenar | number }} دع
+                </h5>
+              </div>
+
+              <div>
+                <h5>
+                  <span> مجموع الموردين</span>
+
+                  {{ custDenar | number }} دع
+                </h5>
+              </div>
+              <div>
+                <h5>
+                  <span> مجموع المخازن</span>
+
+                  {{ storeValue | number : "1.0-0" }} دع
+                </h5>
+              </div>
+
+              <div>
+                <h5>
+                  <span> مجموع الارصدة </span>
+                  {{ blnsDenar | number }} دع | {{ blnsDollar | number }} $
+                </h5>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left ms-0">
+                    <li class="tbl-title">
+                      <h2>بحث</h2>
+                    </li>
+                    <li class="tbl-search-box">
+                      <label for="search-input">
+                        <i class="material-icons search-icon" matSuffix>
+                          search</i
+                        >
+                      </label>
+                      <input
+                        placeholder="اكتب شي للبجث"
+                        type="text"
+                        matInput
+                        (keyup)="applyFilter($event)"
+                        class="browser-default search-field"
+                        aria-label="Search box"
+                      />
+                    </li>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="خزن على ملف PDF">
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          (click)="sendToPdf()"
+                        >
+                          <i class="bi bi-file-earmark-pdf-fill"></i>
+                          PDF
+                          <span
+                            *ngIf="isloading"
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body overflow-auto">
+                <div class="responsive_table">
+                  <table
+                    mat-table
+                    [dataSource]="dataSource"
+                    class="mat-cell advance-table"
+                  >
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ i + 1 }}</mat-cell
+                      >
+                    </ng-container>
+
+                    <ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        الفرع
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الفرع:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="boxDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        رصيد الصندوق
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> رصيد الصندوق:</span>
+                        <div *ngIf="!row.boxSpinner">
+                          <span [ngClass]="{ denar: row.boxDenar < 0 }">
+                            {{ row.boxDenar | number : "1.0-0" }} دع
+                          </span>
+                        </div>
+                        <div *ngIf="row.boxSpinner">
+                          <mat-progress-spinner
+                            color="primary"
+                            mode="indeterminate"
+                            diameter="20"
+                          >
+                          </mat-progress-spinner>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="agentDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        رصيد العملاء
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> رصيد العملاء:</span>
+
+                        <div *ngIf="!row.agentSpinner">
+                          <button
+                            type="button"
+                            class="btn border border-primary"
+                            (click)="showAgentInfo(row, 'other')"
+                          >
+                            <span [ngClass]="{ denar: row.agentDenar < 0 }">
+                              {{ row.agentDenar | number : "1.0-0" }} دع
+                            </span>
+                          </button>
+                        </div>
+                        <div *ngIf="row.agentSpinner">
+                          <mat-progress-spinner
+                            color="primary"
+                            mode="indeterminate"
+                            diameter="20"
+                          >
+                          </mat-progress-spinner>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="muwadenDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        رصيد الموردين
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> رصيد الموردين:</span>
+                        <div *ngIf="!row.muwadenSpinner">
+                          <button
+                            type="button"
+                            class="btn border border-primary"
+                            (click)="showAgentInfo(row, 'seller')"
+                          >
+                            <span [ngClass]="{ denar: row.muwadenDenar < 0 }">
+                              {{ row.muwadenDenar | number : "1.0-0" }}
+                              دع
+                            </span>
+                          </button>
+                        </div>
+
+                        <div *ngIf="row.muwadenSpinner">
+                          <mat-progress-spinner
+                            color="primary"
+                            mode="indeterminate"
+                            diameter="20"
+                          >
+                          </mat-progress-spinner>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="prodDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        مواد الانتاج
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> مواد الانتاج :</span>
+                        <div *ngIf="!row.agentSpinner">
+                          <button
+                            type="button"
+                            class="btn border border-primary"
+                            (click)="ShowProductionInfo(row)"
+                          >
+                            <span>
+                              {{ row.prodDenar | number : "1.0-0" }}
+                              دع
+                            </span>
+                          </button>
+                        </div>
+                        <div *ngIf="row.prodSpinner">
+                          <mat-progress-spinner
+                            color="primary"
+                            mode="indeterminate"
+                            diameter="20"
+                          >
+                          </mat-progress-spinner>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="rawMatDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        مواد الخام
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> مواد الخام :</span>
+                        <div *ngIf="!row.rawMatSpinner">
+                          <button
+                            type="button"
+                            class="btn border border-primary"
+                            (click)="ShowRawMaterialInfo(row)"
+                          >
+                            <span>
+                              {{ row.rawMatDenar | number : "1.0-0" }}
+                              دع
+                            </span>
+                          </button>
+                        </div>
+                        <div *ngIf="row.rawMatSpinner">
+                          <mat-progress-spinner
+                            color="primary"
+                            mode="indeterminate"
+                            diameter="20"
+                          >
+                          </mat-progress-spinner>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="mezan">
+                      <mat-header-cell *matHeaderCellDef>
+                        الميزان
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label">الميزان:</span>
+
+                        <span [ngClass]="{ denar: row.mezan < 0 }">
+                          {{ row.mezan | number : "1.0-0" }}
+                          دع
+                        </span>
+                      </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row
+                      *matHeaderRowDef="displayedColumns"
+                    ></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns">
+                    </mat-row>
+                  </table>
+                  <!-- Loading spinner -->
+                  <div *ngIf="showSpinner" class="tbl-spinner">
+                    <mat-progress-spinner
+                      color="accent"
+                      [diameter]="40"
+                      mode="indeterminate"
+                    >
+                    </mat-progress-spinner>
+                  </div>
+                  <div
+                    *ngIf="showSpinner"
+                    class="no-results"
+                    [style.display]="
+                      dataSource.filteredData.length === 0 ? '' : 'none'
+                    "
+                  >
+                    No results
+                  </div>
+                  <mat-paginator
+                    #paginator
+                    [length]="dataSource.filteredData.length"
+                    [pageIndex]="0"
+                    [pageSize]="10"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                  >
+                  </mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="1" *ngIf="selectedIndex === 1">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i>
+                          رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="responsive_table">
+                  <table
+                    mat-table
+                    [dataSource]="dsAgentList"
+                    class="mat-cell advance-table"
+                  >
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ paginator.pageIndex * paginator.pageSize + i + 1 }}
+                      </mat-cell> </ng-container
+                    ><ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        {{ headTxt }}
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label">{{ headTxt }}:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="address">
+                      <mat-header-cell *matHeaderCellDef>
+                        العنوان
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> العنوان:</span>
+                        {{ row.address }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="phoneNumber">
+                      <mat-header-cell *matHeaderCellDef>
+                        رقم الهاتف
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> رقم الهاتف:</span>
+                        {{ row.phoneNumber }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="initDenar">
+                      <mat-header-cell *matHeaderCellDef>
+                        بداية الرصيد
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> بداية الرصيد :</span>
+                        <div class="dispVert">
+                          <span [ngClass]="{ denar: row.initDenar < 0 }">
+                            {{ row.initDenar | number }} دع
+                          </span>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="denar">
+                      <mat-header-cell *matHeaderCellDef>
+                        الرصيد
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الرصيد :</span>
+                        <div class="dispVert">
+                          <span [ngClass]="{ denar: row.denar < 0 }">
+                            {{ row.denar | number }} دع
+                          </span>
+                        </div>
+                      </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row
+                      *matHeaderRowDef="agentsDisp"
+                    ></mat-header-row>
+                    <mat-row
+                      *matRowDef="let row; columns: agentsDisp"
+                      [style.cursor]="'pointer'"
+                    >
+                    </mat-row>
+                  </table>
+                  <!-- Loading spinner -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="2" *ngIf="selectedIndex === 2">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i>
+                          رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="responsive_table">
+                  <table
+                    mat-table
+                    [dataSource]="dsRawLst"
+                    class="mat-cell advance-table"
+                  >
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ i + 1 }}
+                      </mat-cell> </ng-container
+                    ><ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        اسم المادة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> اسم المادة:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="unitTitle">
+                      <mat-header-cell *matHeaderCellDef>
+                        وحدة القياس
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> وحدة القياس:</span>
+                        {{ row.unitTitle }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="initQuantity">
+                      <mat-header-cell *matHeaderCellDef>
+                        بداية الرصيد
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> بداية الرصيد:</span>
+                        {{ row.initQuantity | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                      <mat-header-cell *matHeaderCellDef>
+                        الرصيد الحالي
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الرصيد الحالي:</span>
+                        {{ row.quantity | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="unitCostPrice">
+                      <mat-header-cell *matHeaderCellDef>
+                        معدل الكلفة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> معدل الكلفة:</span>
+                        {{ row.unitCostPrice | number : "1.0-1" }} دع
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                      <mat-header-cell *matHeaderCellDef>
+                        المجموع
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> المجموع:</span>
+                        {{ row.total | number : "1.0-0" }} دع
+                      </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row
+                      *matHeaderRowDef="rwaDispLst"
+                    ></mat-header-row>
+                    <mat-row
+                      *matRowDef="let row; columns: rwaDispLst"
+                      [style.cursor]="'pointer'"
+                      matRipple
+                    >
+                    </mat-row>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="3" *ngIf="selectedIndex === 3">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" رجوع">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="selectedIndex = 0"
+                        >
+                          <i class="fa fa-arrow-right"></i>
+                          رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="responsive_table">
+                  <table
+                    mat-table
+                    [dataSource]="dsProdLst"
+                    class="mat-cell advance-table"
+                  >
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ i + 1 }}
+                      </mat-cell> </ng-container
+                    ><ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        اسم المادة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> اسم المادة:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="unitTitle">
+                      <mat-header-cell *matHeaderCellDef>
+                        وحدة القياس
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> وحدة القياس:</span>
+                        {{ row.unitTitle }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="cabsa">
+                      <mat-header-cell *matHeaderCellDef>
+                        كبسة/كونية
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> كبسة/كونية :</span>
+                        {{ row.cabsa | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                      <mat-header-cell *matHeaderCellDef>
+                        الرصيد بالوزن
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الرصيد بالوزن:</span>
+                        {{ row.quantity | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="unitCostPrice">
+                      <mat-header-cell *matHeaderCellDef>
+                        معدل الكلفة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> معدل الكلفة:</span>
+                        {{ row.unitCostPrice | number : "1.0-1" }} دع
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                      <mat-header-cell *matHeaderCellDef>
+                        المجموع
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> المجموع:</span>
+                        {{ row.total | number : "1.0-0" }} دع
+                      </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row
+                      *matHeaderRowDef="prodDispLst"
+                    ></mat-header-row>
+                    <mat-row
+                      *matRowDef="let row; columns: prodDispLst"
+                      [style.cursor]="'pointer'"
+                    >
+                    </mat-row>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</section>

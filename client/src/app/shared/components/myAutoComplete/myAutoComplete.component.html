@@ -1,0 +1,40 @@
+<mat-form-field
+  class="example-full-width"
+  appearance="outline"
+  style="width: 100%"
+>
+  <mat-label> {{ placeholder }} </mat-label>
+
+  <input
+    *ngIf="required !== undefined"
+    type="text"
+    matInput
+    [formControl]="autoFormControl"
+    [matAutocomplete]="auto1"
+    [(ngModel)]="selectedText"
+    (blur)="onBlur()"
+    required
+  />
+
+  <input
+    *ngIf="required === undefined"
+    type="text"
+    matInput
+    [formControl]="autoFormControl"
+    [matAutocomplete]="auto1"
+    [(ngModel)]="selectedText"
+    (blur)="onBlur()"
+  />
+  <mat-autocomplete
+    #auto1="matAutocomplete"
+    [displayWith]="disFnAnsweredTo.bind(this)"
+  >
+    <mat-option
+      *ngFor="let option of filterAnsweredTo | async"
+      [value]="option"
+    >
+      <span *ngIf="dataKey !== ''">{{ option[dataKey] }} </span>
+      <span *ngIf="dataKey === ''">{{ option }} </span>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

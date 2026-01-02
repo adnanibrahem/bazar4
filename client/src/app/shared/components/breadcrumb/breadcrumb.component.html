@@ -1,0 +1,11 @@
+<div class="breadcrumb-main">
+  <div style="display: flex; justify-content: space-between">
+    <div class="breadcrumb-title">
+      <h4 style="color: rgb(164, 62, 248)">{{ title }}</h4>
+    </div>
+
+    <div *ngIf="!validPasswprd">
+      <h6 class="passwordWarnning">كلمة المرور ضعيفة</h6>
+    </div>
+  </div>
+</div>
