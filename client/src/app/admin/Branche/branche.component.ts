@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,7 +22,13 @@ import { ComponentsModule } from '@shared/components/components.module';
 })
 export class BrancheComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private http = inject(MyHTTP);
+  private fb = inject(UntypedFormBuilder);
+  private dialog = inject(MatDialog);
+  private datePipe = inject(DatePipe);
+
   dataSource: MatTableDataSource<Branch> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   isTablet = false;
@@ -52,12 +58,7 @@ export class BrancheComponent
   }
   appApi = 'users';
   appApiURL = 'branch/';
-  constructor(
-    private http: MyHTTP,
-    private fb: UntypedFormBuilder,
-    private dialog: MatDialog,
-    private datePipe: DatePipe
-  ) {
+  constructor() {
     super();
   }
   ngOnInit(): void {

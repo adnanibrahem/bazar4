@@ -17,11 +17,12 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-agents',
   templateUrl: './agents.component.html',
   styleUrls: ['./agents.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class AgentsComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
   dataSource: MatTableDataSource<Agent> = new MatTableDataSource();
   dsBoxDet: MatTableDataSource<BalanceDetails> = new MatTableDataSource();
 

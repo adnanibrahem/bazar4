@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -34,7 +34,14 @@ import { ComponentsModule } from '@shared/components/components.module';
 })
 export class UsersComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private http = inject(MyHTTP);
+  private fb = inject(UntypedFormBuilder);
+  private authService = inject(AuthService);
+  private dialog = inject(MatDialog);
+  private datePipe = inject(DatePipe);
+
   dataSource: MatTableDataSource<User> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   isTablet = false;
@@ -83,13 +90,7 @@ export class UsersComponent
   ];
   appApi = 'users';
   appApiURL = '';
-  constructor(
-    private http: MyHTTP,
-    private fb: UntypedFormBuilder,
-    private authService: AuthService,
-    private dialog: MatDialog,
-    private datePipe: DatePipe
-  ) {
+  constructor() {
     super();
   }
 

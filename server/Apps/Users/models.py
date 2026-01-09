@@ -7,7 +7,7 @@ USER_MODEL = get_user_model()
 class Branch(models.Model):
     title = models.CharField(max_length=60)
     address = models.CharField(max_length=60)
-    phoneNumber = models.TextField(null=True, blank=True)
+    phoneNumber = models.CharField(max_length=60, null=True, blank=True)
     deleted = models.BooleanField(default=False)
 
 

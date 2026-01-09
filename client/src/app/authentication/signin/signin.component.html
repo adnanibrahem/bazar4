@@ -2,26 +2,36 @@
   <div class="row auth-main">
     <div class="col-sm-4 auth-form-section">
       <div class="form-section">
-        <h2 class="welcome-msg m-t-25">الارض الخضراء لتدوير النفايات</h2>
+        <h2 class="welcome-msg m-t-25">بازار فور</h2>
 
         <div class="image">
-          <img src="../../../assets/images/logoBig.png" width="200" class="img-circle user-img-circle"
-            alt="User Image" />
+          <img
+            src="../../../assets/images/logoBig.png"
+            width="200"
+            class="img-circle user-img-circle"
+            alt="User Image"
+          />
         </div>
         <div class="auth-wrapper">
           <h5 class="login-title">تسجيل الدخول</h5>
 
-          <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+          <form
+            class="validate-form"
+            [formGroup]="authForm"
+            (ngSubmit)="onSubmit()"
+          >
             <div class="row">
               <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>اسم المستخدم</mat-label>
                   <input matInput formControlName="username" />
-                  <mat-icon class="material-icons-two-tone color-icon p-3" matSuffix>face</mat-icon>
+                  <mat-icon
+                    class="material-icons-two-tone color-icon p-3"
+                    matSuffix
+                    >face</mat-icon
+                  >
                   @if (authForm.get('username')?.hasError('required')) {
-                  <mat-error>
-                    اكتب اسم المستخدم رجاءاً
-                  </mat-error>
+                  <mat-error> اكتب اسم المستخدم رجاءاً </mat-error>
                   }
                 </mat-form-field>
               </div>
@@ -30,16 +40,28 @@
               <div class="col-xl-12col-lg-12 col-md-12 col-sm-12 mb-2">
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>كلمة المرور</mat-label>
-                  <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" />
-                  <a href="#" onClick="return false;" matSuffix (click)="hide = !hide"
-                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                    <mat-icon class="material-icons-two-tone color-icon m-3" matSuffix>
-                      {{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+                  <input
+                    matInput
+                    [type]="hide ? 'password' : 'text'"
+                    formControlName="password"
+                  />
+                  <a
+                    href="#"
+                    onClick="return false;"
+                    matSuffix
+                    (click)="hide = !hide"
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide"
+                  >
+                    <mat-icon
+                      class="material-icons-two-tone color-icon m-3"
+                      matSuffix
+                    >
+                      {{ hide ? "visibility_off" : "visibility" }}</mat-icon
+                    >
                   </a>
                   @if (authForm.get('password')?.hasError('required')) {
-                  <mat-error>
-                    اكتب كلمة المرور رجاءاً
-                  </mat-error>
+                  <mat-error> اكتب كلمة المرور رجاءاً </mat-error>
                   }
                 </mat-form-field>
               </div>
@@ -52,8 +74,15 @@
             }
             <div class="container-auth-form-btn">
               <div style="text-align: center">
-                <button mat-raised-button color="primary" [class.auth-spinner]="loading" [disabled]="loading"
-                  class="auth-form-btn" [disabled]="!authForm.valid" type="submit">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [class.auth-spinner]="loading"
+                  [disabled]="loading"
+                  class="auth-form-btn"
+                  [disabled]="!authForm.valid"
+                  type="submit"
+                >
                   تسجيل الدخول
                 </button>
               </div>
@@ -86,12 +115,14 @@
           </ul> 
         
         
-        -->
-        </div>
+        --></div>
       </div>
     </div>
     <div class="col-sm-8 px-0 d-none d-sm-block">
-      <div class="left-img" style="background-image: url(assets/images/pages/bg-01.jpg)"></div>
+      <div
+        class="left-img"
+        style="background-image: url(assets/images/pages/bg-01.jpg)"
+      ></div>
     </div>
   </div>
 </div>

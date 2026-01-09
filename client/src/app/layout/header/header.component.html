@@ -1,20 +1,40 @@
 <nav #navbar class="navbar active">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a href="#" onClick="return false;" class="navbar-toggle collapsed"
-        (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
-      <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event, 'overlay-open')"></a>
+      <a
+        href="#"
+        onClick="return false;"
+        class="navbar-toggle collapsed"
+        (click)="isNavbarCollapsed = !isNavbarCollapsed"
+        aria-expanded="false"
+      ></a>
+      <a
+        href="#"
+        onClick="return false;"
+        class="bars"
+        (click)="mobileMenuSidebarOpen($event, 'overlay-open')"
+      ></a>
       <a class="navbar-brand" routerLink="{{ homePage }}">
         <img width="32" src="assets/images/logoBig.png" alt="" />
-        <span> الارض الخضراء لتدوير النفايات</span>
+        <span> بازار فور</span>
       </a>
       <!-- مشاريع التنمية الغذائية -->
     </div>
-    <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
+    <div
+      class="collapse navbar-collapse"
+      [ngClass]="isNavbarCollapsed ? '' : 'show'"
+    >
       <ul class="float-start collapse-menu-icon">
         <li>
-          <button mat-button (click)="callSidemenuCollapse()" class="sidemenu-collapse nav-notification-icons">
-            <app-feather-icons [icon]="'menu'" [class]="'header-icon'"></app-feather-icons>
+          <button
+            mat-button
+            (click)="callSidemenuCollapse()"
+            class="sidemenu-collapse nav-notification-icons"
+          >
+            <app-feather-icons
+              [icon]="'menu'"
+              [class]="'header-icon'"
+            ></app-feather-icons>
           </button>
         </li>
       </ul>
@@ -24,7 +44,10 @@
         <li class="nav-item">
           <div>
             <label>السنة التجارية</label>
-            <select [(ngModel)]="curYear" (ngModelChange)="OnSelectCommercialYear($event)">
+            <select
+              [(ngModel)]="curYear"
+              (ngModelChange)="OnSelectCommercialYear($event)"
+            >
               @for (x of CommercialYearList; track x.id) {
               <option [value]="x.id">
                 {{ x.title }}
@@ -78,8 +101,15 @@
         <!-- end select commeriseal year  -->
         <!-- Full Screen Button -->
         <li class="fullscreen">
-          <button mat-button class="nav-notification-icons" (click)="callFullscreen()">
-            <app-feather-icons [icon]="'maximize'" [class]="'header-icon'"></app-feather-icons>
+          <button
+            mat-button
+            class="nav-notification-icons"
+            (click)="callFullscreen()"
+          >
+            <app-feather-icons
+              [icon]="'maximize'"
+              [class]="'header-icon'"
+            ></app-feather-icons>
           </button>
         </li>
         <!-- #END# Full Screen Button -->
@@ -102,7 +132,13 @@
           <button mat-button [matMenuTriggerFor]="profilemenu">
             <div class="chip dropdown-toggle" ngbDropdownToggle class="">
               <span>{{ userFullName }}</span>
-              <img src="{{ userImg }}" class="user_img" width="32" height="32" alt="User" />
+              <img
+                src="{{ userImg }}"
+                class="user_img"
+                width="32"
+                height="32"
+                alt="User"
+              />
             </div>
           </button>
           <mat-menu #profilemenu="matMenu" class="profile-menu">
@@ -117,29 +153,53 @@
                     >Account
                   </button> -->
 
-                  <button mat-menu-item (click)="personalInfo()" class="user-item-list">
-                    <app-feather-icons [icon]="'settings'"
-                      [class]="'user-menu-icons sidebarIconColor'"></app-feather-icons>
+                  <button
+                    mat-menu-item
+                    (click)="personalInfo()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'settings'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
                     <label class="myFont"> الملف الشخصي </label>
                   </button>
 
-                  <button mat-menu-item (click)="changePassword()" class="user-item-list">
-                    <app-feather-icons [icon]="'repeat'"
-                      [class]="'user-menu-icons sidebarIconColor'"></app-feather-icons>
+                  <button
+                    mat-menu-item
+                    (click)="changePassword()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'repeat'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
                     <label class="myFont"> تغغير كلمة المرور </label>
                   </button>
 
                   @if (privilege === 'admin') {
-                  <button mat-menu-item (click)="BalanceMigration()" class="user-item-list">
-                    <app-feather-icons [icon]="'corner-up-right'"
-                      [class]="'user-menu-icons sidebarIconColor'"></app-feather-icons>
+                  <button
+                    mat-menu-item
+                    (click)="BalanceMigration()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'corner-up-right'"
+                      [class]="'user-menu-icons sidebarIconColor'"
+                    ></app-feather-icons>
                     <label class="myFont"> ترحيل الارصدة </label>
                   </button>
                   }
 
-                  <button mat-menu-item (click)="logout()" class="user-item-list">
-                    <app-feather-icons [icon]="'log-out'"
-                      [class]="'user-menu-icons  sidebarIconColor'"></app-feather-icons>
+                  <button
+                    mat-menu-item
+                    (click)="logout()"
+                    class="user-item-list"
+                  >
+                    <app-feather-icons
+                      [icon]="'log-out'"
+                      [class]="'user-menu-icons  sidebarIconColor'"
+                    ></app-feather-icons>
                     <label class="myFont">تسجيل الخروج</label>
                   </button>
                 </div>
