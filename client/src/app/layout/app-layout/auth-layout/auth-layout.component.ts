@@ -8,6 +8,7 @@ import { DOCUMENT } from '@angular/common';
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.component.html',
   styleUrls: [],
+  standalone: false
 })
 export class AuthLayoutComponent {
   direction!: Direction;

@@ -28,11 +28,11 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-boxtransaction',
   templateUrl: './boxtransaction.component.html',
   styleUrls: ['./boxtransaction.component.scss'],
+  standalone: false
 })
 export class BoxTransactionComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<BoxTransaction> = new MatTableDataSource();
   @ViewChild('paginator') pagi!: MatPaginator;
   @ViewChild('pagBoxDetails') pagBoxDetails!: MatPaginator;
@@ -286,7 +286,7 @@ export class BoxTransactionComponent
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    
+
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.totalMoneyFN();
   }
@@ -314,7 +314,7 @@ export class BoxTransactionComponent
     this.varBTrx = ed;
     this.varBTrx.fromAmountComma = ed.toAmount
     this.caption = ' تعديل بيانات حركة حسابات ';
-  
+
     this.selectedIndex = 1;
     if (ed.fromAgent) this.fromSelect = 'fromAgent';
     else if (ed.fromBox) this.fromSelect = 'fromBox';

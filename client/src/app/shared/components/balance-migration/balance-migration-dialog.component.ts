@@ -1,15 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogModule,
+} from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { MyHTTP } from '@core/service/myHttp.service';
 import { AuthService } from '@core';
 import { CommercialYear } from 'app/admin/admin.model';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-balance-migration-dialog',
   templateUrl: './balance-migration-dialog.component.html',
   styleUrls: ['./balance-migration-dialog.component.scss'],
+  standalone: false
 })
 export class BalanceMigrationDialogComponent {
   dsRows = [
@@ -37,7 +44,7 @@ export class BalanceMigrationDialogComponent {
     console.log(x);
   }
 
-  submit() {}
+  submit() { }
 
   onNoClick(): void {
     this.dialogRef.close();

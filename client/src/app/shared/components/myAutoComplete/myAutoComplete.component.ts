@@ -4,7 +4,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { UnsubscribeOnDestroyAdapter } from '@shared';
+import { UnsubscribeOnDestroyAdapter } from '../../UnsubscribeOnDestroyAdapter';
 import { ChangeDetectionStrategy } from '@angular/core'; // import
 
 import { Observable, Subject, Subscription, startWith } from 'rxjs';
@@ -16,11 +16,11 @@ import { map } from 'rxjs/operators';
   selector: 'app-my-auto-complete',
   templateUrl: './myAutoComplete.component.html',
   styleUrls: ['./myAutoComplete.component.scss'],
+  standalone: false
 })
 export class MyAutoCompleteComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   @Input() placeholder: any = '';
   @Input() itemsList: any = [];
   @Input() initValue: any = '';

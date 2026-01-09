@@ -26,11 +26,11 @@ import { MatChipInputEvent } from '@angular/material/chips';
   selector: 'app-chips-autocomplete-complete',
   templateUrl: './chipsAutocomplete.component.html',
   styleUrls: ['./chipsAutocomplete.component.scss'],
+  standalone: false
 })
 export class ChipsAutocompleteComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   @Input() placeholder: any = '';
   @Input() itemsList: any = [];
   @Input() initValue: any = '';

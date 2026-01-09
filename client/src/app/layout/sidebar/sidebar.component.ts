@@ -17,6 +17,7 @@ import { RouteInfo } from './sidebar.metadata';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
+  standalone: false
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   public sidebarItems!: RouteInfo[];
@@ -47,7 +48,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
   @HostListener('window:resize', ['$event'])
-  windowResizecall() {
+  windowResizecall(event?: Event) {
     this.setMenuHeight();
     this.checkStatuForResize(false);
   }

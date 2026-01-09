@@ -7,6 +7,11 @@ import {
 import { Component, Inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { AuthService, User } from '@core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 export interface DialogData {
   id: number;
 }
@@ -15,6 +20,8 @@ export interface DialogData {
   selector: 'app-change-password-dialog',
   templateUrl: './change-password-dialog.component.html',
   styleUrls: ['./change-password-dialog.component.scss'],
+  standalone: false,
+
 })
 export class ChangePasswordDialogComponent {
   dialogTitle: string;
@@ -41,7 +48,7 @@ export class ChangePasswordDialogComponent {
     });
   }
 
-  submit() {}
+  submit() { }
   onNoClick(): void {
     this.dialogRef.close();
   }

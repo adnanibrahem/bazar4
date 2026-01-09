@@ -10,14 +10,15 @@ export interface DialogData {
   selector: 'app-confirm-dialog',
   templateUrl: './confirm.component.html',
   styleUrls: ['./confirm.component.scss'],
+  standalone: false
 })
 export class ConfirmDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) {}
+  ) { }
   onNoClick(): void {
     this.dialogRef.close();
   }
-  confirmDelete(): void {}
+  confirmDelete(): void { }
 }

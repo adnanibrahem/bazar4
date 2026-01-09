@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DOCUMENT } from '@angular/common';
 import {
   Component,
@@ -18,16 +17,23 @@ import { MyHTTP } from '@core/service/myHttp.service';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
 import { CommercialYear } from 'app/admin/admin.model';
 import { BalanceMigrationDialogComponent } from '@shared/components/balance-migration/balance-migration-dialog.component';
+import { FeatherIconsModule } from '@shared/components/feather-icons/feather-icons.module';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  standalone: false
 })
 export class HeaderComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   public config!: InConfiguration;
 
   curYear = 1;
@@ -116,7 +122,7 @@ export class HeaderComponent
       data: {},
       direction: 'rtl',
     });
-    this.subs.sink = dialogRef.afterClosed().subscribe(() => {});
+    this.subs.sink = dialogRef.afterClosed().subscribe(() => { });
   }
 
   callFullscreen() {

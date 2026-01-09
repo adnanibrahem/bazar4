@@ -11,21 +11,20 @@ import { QRCodeModule } from 'angularx-qrcode';
 
 import { TruncatePipe } from '@core/pipes';
 import { BrancheComponent } from './Branche/branche.component';
-import { BoxBranchesComponent } from './boxBranches/boxBranches.component';
-import { ProfitComponent } from './Profits/profit.component';
 
 @NgModule({
-  declarations: [TruncatePipe],
+  declarations: [],
   imports: [
+    TruncatePipe,
     CommonModule,
     AdminRoutingModule,
     QRCodeModule,
     ComponentsModule,
     SharedModule,
     UsersComponent,
-    BoxBranchesComponent,
+
     BrancheComponent,
-    ProfitComponent,
   ],
+  exports: [UsersComponent, BrancheComponent],
 })
 export class AdminModule {}

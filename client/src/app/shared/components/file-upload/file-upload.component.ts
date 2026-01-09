@@ -13,18 +13,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
   styleUrls: ['./file-upload.component.scss'],
+  standalone: false
 })
 export class FileUploadComponent implements ControlValueAccessor {
   onChange!: Function;
   public file: File | null = null;
 
-  @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
-    const file = event && event.item(0);
-    this.onChange(file);
-    this.file = file;
+  @HostListener('change', ['$event']) emitFiles(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files && target.files.item(0);
+    if (file) {
+      this.onChange(file);
+      this.file = file;
+    }
   }
 
-  constructor(private host: ElementRef<HTMLInputElement>) {}
+  constructor(private host: ElementRef<HTMLInputElement>) { }
 
   writeValue(value: null) {
     // clear file input

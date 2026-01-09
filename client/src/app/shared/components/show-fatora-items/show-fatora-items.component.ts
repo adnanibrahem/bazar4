@@ -7,6 +7,7 @@ import { Fatora } from 'app/branchAdmin/branchAdmin.model';
   selector: 'app-show-fatora-items-dialog',
   templateUrl: './show-fatora-items.component.html',
   styleUrls: ['./show-fatora-items.component.scss'],
+  standalone: false
 })
 export class ShowFatoraItemsDialogComponent {
   items = '';
@@ -23,7 +24,7 @@ export class ShowFatoraItemsDialogComponent {
   imgClick(x: any) {
     window.open(x.img);
   }
-  submit() {}
+  submit() { }
   onNoClick(): void {
     this.dialogRef.close();
   }

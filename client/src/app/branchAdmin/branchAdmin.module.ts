@@ -12,29 +12,22 @@ import { PurchasRawMaterialComponent } from './Purchase/purchas-raw-material.com
 import { ProductionOperationComponent } from './ProductionOperation/production-operation.component';
 import { CategoryComponent } from './Category/category.component';
 import { BoxTransactionComponent } from './BoxTransaction/boxtransaction.component';
-import { SaleMaterialComponent } from './Sale/sale.component';
 import { AgentsComponent } from './Agents/agents.component';
-// import { BuyersComponent } from './Buyers/buyers.component';
-import { SellersComponent } from './Sellers/sellers.component';
-import { FixedAssetsComponent } from './FixedAssets/fixed-assets.component';
-
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    BranchAdminRoutingModule,
-    ComponentsModule,
-    SharedModule,
+  declarations: [
     ProductionItemsComponent,
     RawMaterialsComponent,
     PurchasRawMaterialComponent,
     ProductionOperationComponent,
     CategoryComponent,
     BoxTransactionComponent,
-    SaleMaterialComponent,
-    FixedAssetsComponent,
     AgentsComponent,
-    SellersComponent,
+  ],
+  imports: [
+    CommonModule,
+    BranchAdminRoutingModule,
+    ComponentsModule,
+    SharedModule,
   ],
 })
 export class BranchAdminModule {}

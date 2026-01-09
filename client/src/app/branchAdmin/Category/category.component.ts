@@ -14,11 +14,11 @@ import { Category } from '../branchAdmin.model';
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss'],
+  standalone: false
 })
 export class CategoryComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<Category> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   isTablet = false;

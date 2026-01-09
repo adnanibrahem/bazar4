@@ -36,21 +36,24 @@
                         >
                           <i class="bi bi-file-earmark-pdf-fill"></i>
                           PDF
+                          @if (isloading) {
                           <span
-                            *ngIf="isloading"
                             class="spinner-border spinner-border-sm"
                             role="status"
                             aria-hidden="true"
                           ></span>
+                          }
                         </button>
                       </div>
                     </li> -->
 
-                    <li class="tbl-header-btn m-4" *ngIf="auth.role !== 'StoreKeeper'">
+                    @if (auth.role !== 'StoreKeeper') {
+                    <li class="tbl-header-btn m-4">
                       <h6>
                         المجموع : {{ totalItemsCost | number : "1.0-0" }} دع
                       </h6>
                     </li>
+                    }
                     <li class="tbl-header-btn">
                       <div class="m-l-10" matTooltip=" تسجيل مادة اولية">
                         <button type="button" class="btn btn-warning" (click)="addNew()">
@@ -133,24 +136,28 @@
                         <button mat-icon-button color="secondry" (click)="$event.stopPropagation()"
                           (click)="detailsProject(row)" class="tbl-action-btn" matTooltip="التفاصيل"
                           [disabled]="row.spinner">
-                          <app-feather-icons *ngIf="!row.spinner" [icon]="'info'" [class]="'tbl-fav-edit'">
+                          @if (!row.spinner) {
+                          <app-feather-icons [icon]="'info'" [class]="'tbl-fav-edit'">
                           </app-feather-icons>
-                          <span *ngIf="row.spinner" class="spinner-border spinner-border-sm" role="status"
-                            aria-hidden="true"></span>
+                          } @if (row.spinner) {
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          }
                         </button>
 
-                        <button *ngIf="curUser.privilege === 'accountant'" mat-icon-button color="accent"
-                          (click)="$event.stopPropagation()" (click)="editCall(row)" class="tbl-action-btn"
-                          matTooltip="تعديل">
+                        @if (curUser.privilege === 'accountant') {
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="editCall(row)" class="tbl-action-btn" matTooltip="تعديل">
                           <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'">
                           </app-feather-icons>
                         </button>
-                        <button *ngIf="curUser.privilege === 'accountant'" mat-icon-button color="accent"
-                          (click)="$event.stopPropagation()" (click)="deleteItem(i, row)" class="tbl-action-btn"
-                          matTooltip="حذف">
+                        }
+                        @if (curUser.privilege === 'accountant') {
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="deleteItem(i, row)" class="tbl-action-btn" matTooltip="حذف">
                           <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'">
                           </app-feather-icons>
                         </button>
+                        }
                       </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -159,15 +166,18 @@
                   </table>
 
                   <!-- Loading spinner -->
-                  <div *ngIf="showSpinner" class="tbl-spinner">
+                  @if (showSpinner) {
+                  <div class="tbl-spinner">
                     <mat-progress-spinner color="accent" [diameter]="40" mode="indeterminate">
                     </mat-progress-spinner>
                   </div>
-                  <div *ngIf="showSpinner" class="no-results" [style.display]="
+                  } @if (showSpinner) {
+                  <div class="no-results" [style.display]="
                       dataSource.filteredData.length === 0 ? '' : 'none'
                     ">
                     No results
                   </div>
+                  }
                   <mat-paginator #pagi [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
                     [pageSizeOptions]="[5, 10, 25, 100]">
                   </mat-paginator>
@@ -176,7 +186,8 @@
             </div>
           </div>
         </mat-tab>
-        <mat-tab label="2" *ngIf="selectedIndex === 1">
+        <mat-tab label="2">
+          @if (selectedIndex === 1) {
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
               <div class="materialTableHeader">
@@ -218,11 +229,13 @@
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label>
                           بداية الرصيد
-                          <span *ngIf="gFormGroup.get('initQuantity')!.value > 0" style="color: red; font-size: 150%">
+                          @if (gFormGroup.get('initQuantity')!.value > 0) {
+                          <span style="color: red; font-size: 150%">
                             (
                             {{ gFormGroup.get("initQuantity")!.value | number }}
                             )
                           </span>
+                          }
                         </mat-label>
                         <input matInput type="number" formControlName="initQuantity" placeholder="بداية الرصيد" required
                           (keyup.enter)="
@@ -232,25 +245,26 @@
                                 gFormGroup.get('initQuantity')!.value * 1000
                               )
                           " />
-                        <mat-error *ngIf="
-                            gFormGroup.get('initQuantity')?.hasError('required')
-                          ">
-                          هذا الحقل مطلوب
-                        </mat-error>
+                        @if (gFormGroup.get('initQuantity')?.hasError('required')) {
+                        <mat-error> هذا الحقل مطلوب </mat-error>
+                        }
                       </mat-form-field>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12" *ngIf="auth.role !== 'StoreKeeper'">
+                    @if (auth.role !== 'StoreKeeper') {
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label>
                           معدل الكلفة
-                          <span *ngIf="gFormGroup.get('unitCostPrice')!.value > 0" style="color: red; font-size: 150%">
+                          @if (gFormGroup.get('unitCostPrice')!.value > 0) {
+                          <span style="color: red; font-size: 150%">
                             (
                             {{
                             gFormGroup.get("unitCostPrice")!.value | number
                             }}
                             )
                           </span>
+                          }
                         </mat-label>
                         <input matInput type="number" formControlName="unitCostPrice" placeholder=" معدل الكلفة"
                           required (keyup.enter)="
@@ -260,15 +274,12 @@
                                 gFormGroup.get('unitCostPrice')!.value * 1000
                               )
                           " />
-                        <mat-error *ngIf="
-                            gFormGroup
-                              .get('unitCostPrice')
-                              ?.hasError('required')
-                          ">
-                          هذا الحقل مطلوب
-                        </mat-error>
+                        @if (gFormGroup.get('unitCostPrice')?.hasError('required')) {
+                        <mat-error> هذا الحقل مطلوب </mat-error>
+                        }
                       </mat-form-field>
                     </div>
+                    }
                   </div>
                   <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
@@ -285,9 +296,11 @@
               </div>
             </div>
           </div>
+          }
         </mat-tab>
 
-        <mat-tab label="2" *ngIf="selectedIndex === 2">
+        <mat-tab label="2">
+          @if (selectedIndex === 2) {
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
               <div class="materialTableHeader">
@@ -300,14 +313,17 @@
                 </div>
                 <div class="right">
                   <ul class="tbl-export-btn">
-                    <div *ngIf="curUser.privilege === 'branchAccountant'" class="m-l-10" matTooltip="خزن على ملف PDF">
+                    @if (curUser.privilege === 'branchAccountant') {
+                    <div class="m-l-10" matTooltip="خزن على ملف PDF">
                       <button type="button" class="btn btn-info" (click)="sendDetailsToPdf()">
                         <i class="bi bi-file-earmark-pdf-fill"></i>
                         PDF
-                        <span *ngIf="isloadingDetails" class="spinner-border spinner-border-sm" role="status"
-                          aria-hidden="true"></span>
+                        @if (isloadingDetails) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
                       </button>
                     </div>
+                    }
                     <li class="tbl-header-btn">
                       <div class="m-l-10" matTooltip="رجوع">
                         <button type="button" class="btn btn-danger" (click)="selectedIndex = 0">
@@ -356,9 +372,9 @@
                         </mat-header-cell>
                         <mat-cell *matCellDef="let row">
                           <span class="mobile-label"> السعر</span>
-                          <span *ngIf="row.price">
-                            {{ row.price | number }} دع
-                          </span>
+                          @if (row.price) {
+                          <span> {{ row.price | number }} دع </span>
+                          }
 
                         </mat-cell>
                       </ng-container>
@@ -405,6 +421,7 @@
               </div>
             </div>
           </div>
+          }
         </mat-tab>
       </mat-tab-group>
     </div>

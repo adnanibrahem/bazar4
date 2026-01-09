@@ -33,17 +33,6 @@ const routes: Routes = [
             (m) => m.BranchAdminModule
           ),
       },
-      {
-        path: 'strkepr',
-        canActivate: [AuthGuard],
-        data: {
-          role: [Role.StoreKeeper],
-        },
-        loadChildren: () =>
-          import('./storeKeeper/storeKeeper.module').then(
-            (m) => m.StoreKeeperModule
-          ),
-      },
     ],
   },
 

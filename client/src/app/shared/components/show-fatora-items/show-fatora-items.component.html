@@ -5,12 +5,7 @@
         <div class="modal-about carioFomt">{{ title }}</div>
       </div>
     </div>
-    <button
-      mat-icon-button
-      (click)="dialogRef.close()"
-      class="modal-close-button"
-      aria-label="Close dialog"
-    >
+    <button mat-icon-button (click)="dialogRef.close()" class="modal-close-button" aria-label="Close dialog">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -18,8 +13,11 @@
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-2">
         <span>
-          <strong *ngIf="data.fatoraType === 1">اسم البائع :</strong>
-          <strong *ngIf="data.fatoraType === 2">اسم العميل :</strong>
+          @if (data.fatoraType === 1) {
+          <strong>اسم البائع :</strong>
+          } @if (data.fatoraType === 2) {
+          <strong>اسم العميل :</strong>
+          }
           {{ data.agentTitle }}
         </span>
       </div>
@@ -67,7 +65,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let x of data.items; let i = index">
+          @for (x of data.items; track $index; let i = $index) {
+          <tr>
             <th scope="row">{{ i + 1 }}</th>
             <td>{{ x.rawMaterialTitle }} {{ x.productItemTitle }}</td>
             <td>{{ x.quantity }}</td>
@@ -75,35 +74,25 @@
             <td>{{ x.unitCostPrice | number }} دع</td>
             <td>{{ x.unitCostPrice * x.quantity | number }} دع</td>
           </tr>
+          }
         </tbody>
       </table>
     </div>
     <div class="row">
       <h6 class="social-login-title">صورة المستندات</h6>
-      <div
-        *ngFor="let x of data.documents; index as i"
-        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2"
-      >
+      @for (x of data.documents; track $index; let i = $index) {
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
         <div class="img-container position-relative">
-          <img
-            [src]="x?.img"
-            class="img-thumbnail rounded"
-            (click)="imgClick(x)"
-          />
+          <img [src]="x?.img" class="img-thumbnail rounded" (click)="imgClick(x)" />
         </div>
       </div>
+      }
     </div>
 
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
         <div class="example-button-row" align="end">
-          <button
-            mat-raised-button
-            color="warn"
-            (click)="onNoClick()"
-            [mat-dialog-close]="undefined"
-            tabindex="-1"
-          >
+          <button mat-raised-button color="warn" (click)="onNoClick()" [mat-dialog-close]="undefined" tabindex="-1">
             غلق النافذة
           </button>
         </div>

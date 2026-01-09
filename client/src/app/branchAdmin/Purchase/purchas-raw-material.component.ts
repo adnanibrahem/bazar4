@@ -36,11 +36,11 @@ import { json } from 'd3';
   selector: 'app-purchas-raw-material',
   templateUrl: './purchas-raw-material.component.html',
   styleUrls: ['./purchas-raw-material.component.scss'],
+  standalone: false
 })
 export class PurchasRawMaterialComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<Fatora> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   @ViewChild('searchKey') searchKey!: any;

@@ -7,6 +7,7 @@ import { BarcodeFormat } from '@zxing/library';
   selector: 'app-barcode-dialog',
   templateUrl: './barcode-dialog.component.html',
   styleUrls: ['./barcode-dialog.component.scss'],
+  standalone: false
 })
 export class BarcodeDialogComponent {
   availableDevices: MediaDeviceInfo[] = [];
@@ -28,7 +29,7 @@ export class BarcodeDialogComponent {
     public dialogRef: MatDialogRef<BarcodeDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: string
-  ) {}
+  ) { }
   onNoClick(): void {
     this.dialogRef.close();
   }

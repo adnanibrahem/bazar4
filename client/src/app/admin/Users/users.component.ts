@@ -22,15 +22,19 @@ class tmpUser {
   privilegeDic!: string;
 }
 
+import { SharedModule } from '@shared/shared.module';
+import { ComponentsModule } from '@shared/components/components.module';
+
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
+  standalone: true,
+  imports: [SharedModule, ComponentsModule],
 })
 export class UsersComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<User> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   isTablet = false;

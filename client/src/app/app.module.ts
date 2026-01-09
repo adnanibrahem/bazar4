@@ -29,13 +29,24 @@ import { CoreModule } from '@core';
 import { DatePipe } from '@angular/common';
 import { PersonalInfoDialogComponent } from './layout/header/personal-info-dialog/personal-info-dialog.component';
 import { ChangePasswordDialogComponent } from './layout/header/change-password-dialog/change-password-dialog.component';
+import { ComponentsModule } from '@shared/components/components.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    PageLoaderComponent,
+    SidebarComponent,
+    RightSidebarComponent,
+    AuthLayoutComponent,
+    MainLayoutComponent,
+    PersonalInfoDialogComponent,
+    ChangePasswordDialogComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -54,17 +65,8 @@ export function createTranslateLoader(http: HttpClient) {
     // core & shared
     CoreModule,
     SharedModule,
-    AppComponent,
-    HeaderComponent,
-    PageLoaderComponent,
-    SidebarComponent,
-    RightSidebarComponent,
-    AuthLayoutComponent,
-    MainLayoutComponent,
-    PersonalInfoDialogComponent,
-    ChangePasswordDialogComponent,
+    ComponentsModule,
   ],
-
   providers: [
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

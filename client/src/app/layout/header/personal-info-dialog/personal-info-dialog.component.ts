@@ -17,6 +17,12 @@ import { WebcamImage } from 'ngx-webcam';
 import { generateId } from '@shared/TableElement';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MyHTTP } from '@core/service/myHttp.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 export interface DialogData {
   id: number;
 }
@@ -25,6 +31,7 @@ export interface DialogData {
   selector: 'app-personal-info-dialog',
   templateUrl: './personal-info-dialog.component.html',
   styleUrls: ['./personal-info-dialog.component.scss'],
+  standalone: false
 })
 export class PersonalInfoDialogComponent {
   dialogTitle: string;
@@ -57,7 +64,7 @@ export class PersonalInfoDialogComponent {
     });
   }
 
-  submit() {}
+  submit() { }
   onNoClick(): void {
     this.dialogRef.close();
   }

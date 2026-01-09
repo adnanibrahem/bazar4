@@ -8,7 +8,14 @@ import { FeatherIconsModule } from './components/feather-icons/feather-icons.mod
 import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MaterialModule,
+    FeatherIconsModule,
+  ],
   exports: [
     CommonModule,
     FormsModule,

@@ -12,17 +12,21 @@ import { ConfigService } from '@config';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { DirectionService, InConfiguration, RightSidebarService } from '@core';
+import { CommonModule } from '@angular/common';
+import { FeatherIconsModule } from '@shared/components/feather-icons/feather-icons.module';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-right-sidebar',
   templateUrl: './right-sidebar.component.html',
   styleUrls: ['./right-sidebar.component.scss'],
+  standalone: false
 })
 export class RightSidebarComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit, AfterViewInit
-{
+  implements OnInit, AfterViewInit {
   selectedBgColor = 'white';
   maxHeight?: string;
   maxWidth?: string;

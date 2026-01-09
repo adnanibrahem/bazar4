@@ -8,15 +8,29 @@ import {
 } from '@angular/forms';
 import { AuthService, Role, User } from '@core';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+  ]
 })
 export class SigninComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   authForm!: UntypedFormGroup;
   submitted = false;
   loading = false;

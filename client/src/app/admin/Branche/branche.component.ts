@@ -10,15 +10,19 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MyHTTP } from '@core/service/myHttp.service';
 import { Branch } from '../admin.model';
 
+import { SharedModule } from '@shared/shared.module';
+import { ComponentsModule } from '@shared/components/components.module';
+
 @Component({
   selector: 'app-branche',
   templateUrl: './branche.component.html',
   styleUrls: ['./branche.component.scss'],
+  standalone: true,
+  imports: [SharedModule, ComponentsModule],
 })
 export class BrancheComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<Branch> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   isTablet = false;

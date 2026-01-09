@@ -17,11 +17,11 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-raw-materials',
   templateUrl: './raw-materials.component.html',
   styleUrls: ['./raw-materials.component.scss'],
+  standalone: false
 })
 export class RawMaterialsComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<RawMaterialItem> = new MatTableDataSource();
 
   @ViewChild('pagi') pagi!: MatPaginator;

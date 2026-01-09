@@ -103,14 +103,17 @@
                           <span [ngClass]="{ denar: row.denar < 0 }">
                             {{ row.denar | number }} دع
 
-                            <button *ngIf="row.denar < 0" mat-button (click)="$event.stopPropagation()"
+                            @if (row.denar < 0) { <button mat-button (click)="$event.stopPropagation()"
                               (click)="payAmountBox(row)" matTooltip="تسديد المبلغ" color="primary">
                               تسديد المبلغ
                               <app-feather-icons [icon]="'dollar-sign'" [class]="'tbl-fav-edit'">
                               </app-feather-icons>
 
-                              <div *ngIf="row.spinner" class="spinner-border spinner-border-sm"></div>
-                            </button>
+                              @if (row.spinner) {
+                              <div class="spinner-border spinner-border-sm"></div>
+                              }
+                              </button>
+                              }
                           </span>
                         </div>
                       </mat-cell>
@@ -130,12 +133,13 @@
                           <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'">
                           </app-feather-icons>
                         </button>
-                        <button *ngIf="row.denar === 0" mat-icon-button color="accent"
-                          (click)="$event.stopPropagation()" (click)="deleteItem(i, row)" class="tbl-action-btn"
-                          matTooltip="حذف">
+                        @if (row.denar === 0) {
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="deleteItem(i, row)" class="tbl-action-btn" matTooltip="حذف">
                           <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'">
                           </app-feather-icons>
                         </button>
+                        }
                       </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -144,15 +148,17 @@
                     </mat-row>
                   </table>
                   <!-- Loading spinner -->
-                  <div *ngIf="showSpinner" class="tbl-spinner">
+                  @if (showSpinner) {
+                  <div class="tbl-spinner">
                     <mat-progress-spinner color="accent" [diameter]="40" mode="indeterminate">
                     </mat-progress-spinner>
                   </div>
-                  <div *ngIf="showSpinner" class="no-results" [style.display]="
+                  <div class="no-results" [style.display]="
                       dataSource.filteredData.length === 0 ? '' : 'none'
                     ">
                     No results
                   </div>
+                  }
                   <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
                     [pageSizeOptions]="[5, 10, 25, 100]">
                   </mat-paginator>
@@ -161,7 +167,8 @@
             </div>
           </div>
         </mat-tab>
-        <mat-tab label="2" *ngIf="selectedIndex === 1">
+        @if (selectedIndex === 1) {
+        <mat-tab label="2">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
               <div class="materialTableHeader">
@@ -189,41 +196,45 @@
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label> اسم العميل </mat-label>
                         <input matInput type="text " formControlName="title" placeholder="اسم العميل" required />
-                        <mat-error *ngIf="gFormGroup.get('title')?.hasError('required')">
+                        @if (gFormGroup.get('title')?.hasError('required')) {
+                        <mat-error>
                           هذا الحقل مطلوب
                         </mat-error>
+                        }
                       </mat-form-field>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label> العنوان </mat-label>
                         <input matInput type="text " formControlName="address" placeholder="العنوان" required />
-                        <mat-error *ngIf="
-                            gFormGroup.get('address')?.hasError('required')
-                          ">
+                        @if (gFormGroup.get('address')?.hasError('required')) {
+                        <mat-error>
                           هذا الحقل مطلوب
                         </mat-error>
+                        }
                       </mat-form-field>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label> رقم الهاتف </mat-label>
                         <input matInput type="text " formControlName="phoneNumber" placeholder="رقم الهاتف" required />
-                        <mat-error *ngIf="
-                            gFormGroup.get('phoneNumber')?.hasError('required')
-                          ">
+                        @if (gFormGroup.get('phoneNumber')?.hasError('required')) {
+                        <mat-error>
                           هذا الحقل مطلوب
                         </mat-error>
+                        }
                       </mat-form-field>
                     </div>
                     <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
                       <mat-form-field class="example-full-width" appearance="outline">
                         <mat-label>
                           بداية الرصيد بالدينار
-                          <span *ngIf="gFormGroup.get('initDenar')!.value > 0" style="color: red; font-size: 150%">
+                          @if (gFormGroup.get('initDenar')!.value > 0) {
+                          <span style="color: red; font-size: 150%">
                             (
                             {{ gFormGroup.get("initDenar")!.value | number }} )
                           </span>
+                          }
                         </mat-label>
                         <input matInput type="number" formControlName="initDenar" placeholder="بداية الرصيد بالدينار"
                           required (keyup.enter)="
@@ -233,11 +244,11 @@
                                 gFormGroup.get('initDenar')!.value * 1000
                               )
                           " />
-                        <mat-error *ngIf="
-                            gFormGroup.get('initDenar')?.hasError('required')
-                          ">
+                        @if (gFormGroup.get('initDenar')?.hasError('required')) {
+                        <mat-error>
                           هذا الحقل مطلوب
                         </mat-error>
+                        }
                       </mat-form-field>
                     </div>
                   </div>
@@ -257,8 +268,10 @@
             </div>
           </div>
         </mat-tab>
+        }
 
-        <mat-tab label="2" *ngIf="selectedIndex === 2">
+        @if (selectedIndex === 2) {
+        <mat-tab label="2">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
               <div class="materialTableHeader">
@@ -382,6 +395,7 @@
             </div>
           </div>
         </mat-tab>
+        }
       </mat-tab-group>
     </div>
   </div>

@@ -8,11 +8,12 @@ import { map } from 'rxjs/operators';
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[inputWithComma]',
   providers: [DecimalPipe],
+  standalone: false,
 })
 export class NumberCommaDirective implements OnInit, OnDestroy {
   private subscription: Subscription | undefined;
 
-  constructor(private ngControl: NgControl, private decimal: DecimalPipe) {}
+  constructor(private ngControl: NgControl, private decimal: DecimalPipe) { }
 
   ngOnInit() {
     const control = this.ngControl.control;

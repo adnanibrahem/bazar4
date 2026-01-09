@@ -17,11 +17,11 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-production-items',
   templateUrl: './production-items.component.html',
   styleUrls: ['./production-items.component.scss'],
+  standalone: false
 })
 export class ProductionItemsComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<ProductionItem> = new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;
   @ViewChild('pagBoxDetails') pagBoxDetails!: MatPaginator;

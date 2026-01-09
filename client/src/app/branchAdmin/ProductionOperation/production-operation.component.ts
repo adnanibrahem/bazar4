@@ -24,11 +24,11 @@ import {
   selector: 'app-production-operation',
   templateUrl: './production-operation.component.html',
   styleUrls: ['./production-operation.component.scss'],
+  standalone: false
 })
 export class ProductionOperationComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   dataSource: MatTableDataSource<ProductionOperation> =
     new MatTableDataSource();
   @ViewChild('pagi') pagi!: MatPaginator;

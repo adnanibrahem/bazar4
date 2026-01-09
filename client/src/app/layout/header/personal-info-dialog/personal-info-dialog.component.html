@@ -7,50 +7,29 @@
         </div>
       </div>
     </div>
-    <button
-      mat-icon-button
-      (click)="dialogRef.close()"
-      class="modal-close-button"
-      aria-label="Close dialog"
-    >
+    <button mat-icon-button (click)="dialogRef.close()" class="modal-close-button" aria-label="Close dialog">
       <mat-icon>close</mat-icon>
     </button>
   </div>
   <div mat-dialog-content>
-    <form
-      class="register-form m-4"
-      [formGroup]="groupForm"
-      (ngSubmit)="(submit)"
-    >
+    <form class="register-form m-4" [formGroup]="groupForm" (ngSubmit)="(submit)">
       <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
           <mat-form-field class="example-full-width" appearance="outline">
             <mat-label>رقم الهاتف</mat-label>
-            <input
-              matInput
-              type="text"
-              formControlName="phoneNumber"
-              required
-            />
-            <mat-icon
-              class="material-icons-two-tone material-symbols-outlined color-icon p-3"
-              matSuffix
-              >phone</mat-icon
-            >
-            <mat-error
-              *ngIf="groupForm.get('phoneNumber')?.hasError('required')"
-            >
-              هذا الحقل مطلوب
-            </mat-error>
+            <input matInput type="text" formControlName="phoneNumber" required />
+            <mat-icon class="material-icons-two-tone material-symbols-outlined color-icon p-3"
+              matSuffix>phone</mat-icon>
+            @if (groupForm.get('phoneNumber')?.hasError('required')) {
+            <mat-error> هذا الحقل مطلوب </mat-error>
+            }
           </mat-form-field>
         </div>
       </div>
       <hr />
       <div class="row">
-        <div
-          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2 d-flex justify-content-center"
-          *ngIf="showPictureFile.value"
-        >
+        @if (showPictureFile.value) {
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2 d-flex justify-content-center">
           <div class="img-container position-relative">
             <!-- <span
                 role="button"
@@ -63,60 +42,37 @@
             <img [src]="showPictureFile.value" class="img-thumbnail rounded" />
           </div>
         </div>
-      </div>
+        }
 
-      <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-          <div class="example-button-row" align="center">
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="addImageFromWebcam()"
-            >
-              صورة من كامرا
-              <mat-icon>photo_camera</mat-icon>
-            </button>
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <div class="example-button-row" align="center">
+              <button mat-raised-button color="primary" (click)="addImageFromWebcam()">
+                صورة من كامرا
+                <mat-icon>photo_camera</mat-icon>
+              </button>
 
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="selectDocsFile.click()"
-            >
-              صورة من ملف
-              <mat-icon>add_photo_alternate</mat-icon>
-            </button>
-            <input
-              #selectDocsFile
-              type="file"
-              accept="image/*"
-              onclick="this.value = null"
-              (change)="selectFile(selectDocsFile.files)"
-              style="display: none"
-            />
+              <button mat-raised-button color="accent" (click)="selectDocsFile.click()">
+                صورة من ملف
+                <mat-icon>add_photo_alternate</mat-icon>
+              </button>
+              <input #selectDocsFile type="file" accept="image/*" onclick="this.value = null"
+                (change)="selectFile(selectDocsFile.files)" style="display: none" />
+            </div>
           </div>
         </div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-          <div class="example-button-row" align="end">
-            <button
-              mat-raised-button
-              color="primary"
-              [mat-dialog-close]="groupForm.getRawValue()"
-              (click)="confirmAdd()"
-            >
-              حفظ البيانات
-            </button>
-            <button
-              mat-raised-button
-              color="warn"
-              (click)="onNoClick()"
-              [mat-dialog-close]="undefined"
-              tabindex="-1"
-            >
-              الغاء
-            </button>
+        <hr />
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+            <div class="example-button-row" align="end">
+              <button mat-raised-button color="primary" [mat-dialog-close]="groupForm.getRawValue()"
+                (click)="confirmAdd()">
+                حفظ البيانات
+              </button>
+              <button mat-raised-button color="warn" (click)="onNoClick()" [mat-dialog-close]="undefined" tabindex="-1">
+                الغاء
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -16,11 +16,7 @@ import { ShowFatoraItemsDialogComponent } from './show-fatora-items/show-fatora-
 import { BalanceMigrationDialogComponent } from './balance-migration/balance-migration-dialog.component';
 
 @NgModule({
-  declarations: [NumberCommaDirective],
-  imports: [
-    SharedModule,
-    WebcamModule,
-    ZXingScannerModule,
+  declarations: [
     FileUploadComponent,
     BreadcrumbComponent,
     ConfirmDialogComponent,
@@ -30,8 +26,10 @@ import { BalanceMigrationDialogComponent } from './balance-migration/balance-mig
     MyAutoCompleteComponent,
     ChipsAutocompleteComponent,
     BarcodeDialogComponent,
+    NumberCommaDirective,
     BalanceMigrationDialogComponent,
   ],
+  imports: [SharedModule, WebcamModule, ZXingScannerModule],
   exports: [
     FileUploadComponent,
     BreadcrumbComponent,
@@ -45,4 +43,4 @@ import { BalanceMigrationDialogComponent } from './balance-migration/balance-mig
     BalanceMigrationDialogComponent,
   ],
 })
-export class ComponentsModule {}
+export class ComponentsModule { }

@@ -6,6 +6,7 @@ import { Component, Inject } from '@angular/core';
   selector: 'app-show-only-dialog-pending',
   templateUrl: './show-only-dialog.component.html',
   styleUrls: ['./show-only-dialog.component.scss'],
+  standalone: false
 })
 export class ShowOnlyDialogComponent {
   items: any;
@@ -15,7 +16,7 @@ export class ShowOnlyDialogComponent {
   ) {
     this.items = data.arr;
   }
-  submit() {}
+  submit() { }
   onNoClick(): void {
     this.dialogRef.close();
   }

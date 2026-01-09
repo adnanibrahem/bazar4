@@ -7,6 +7,8 @@ import { Observable, Subject } from 'rxjs';
 @Component({
   selector: 'app-webcam-dialog',
   templateUrl: './webcam-dialog.component.html',
+  styleUrls: ['./webcam-dialog.component.scss'],
+  standalone: false
 })
 export class WebcamDialogComponent implements OnInit, OnDestroy {
   webCamWidth = 500;
@@ -29,7 +31,7 @@ export class WebcamDialogComponent implements OnInit, OnDestroy {
     boolean | string
   >();
 
-  constructor(protected ref: MatDialogRef<WebcamDialogComponent>) {}
+  constructor(protected ref: MatDialogRef<WebcamDialogComponent>) { }
 
   ngOnInit(): void {
     this.setupWebCam();

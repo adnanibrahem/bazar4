@@ -7,12 +7,7 @@
         </div>
       </div>
     </div>
-    <button
-      mat-icon-button
-      (click)="dialogRef.close()"
-      class="modal-close-button"
-      aria-label="Close dialog"
-    >
+    <button mat-icon-button (click)="dialogRef.close()" class="modal-close-button" aria-label="Close dialog">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -33,26 +28,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let x of dsRows; let i = index">
+            @for (x of dsRows; track $index; let i = $index) {
+            <tr>
               <th>{{ i + 1 }}</th>
               <td>{{ x.title }}</td>
               <td>
-                <button
-                  mat-flat-button
-                  color="primary"
-                  (click)="migrate(x)"
-                  [disabled]="x.showSpinner"
-                >
+                <button mat-flat-button color="primary" (click)="migrate(x)" [disabled]="x.showSpinner">
                   ترحيل
-                  <span
-                    *ngIf="x.showSpinner"
-                    class="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
+                  @if (x.showSpinner) {
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  }
                 </button>
               </td>
             </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -65,13 +54,7 @@
 
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
         <div class="example-button-row" align="end">
-          <button
-            mat-raised-button
-            color="warn"
-            class="tabstop"
-            (click)="onNoClick()"
-            [mat-dialog-close]="2"
-          >
+          <button mat-raised-button color="warn" class="tabstop" (click)="onNoClick()" [mat-dialog-close]="2">
             غلق النافذة
           </button>
         </div>
