@@ -198,10 +198,6 @@ export class Category {
   deleted!: boolean;
 }
 
-export class SubAcountant {
-  id!: number;
-  title!: string;
-}
 export class FixedAssets {
   id!: number;
   branch!: number;

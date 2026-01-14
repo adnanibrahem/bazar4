@@ -1,0 +1,117 @@
+@use '@angular/material' as mat;
+
+// Custom Violet Palette
+$violet-palette: (
+    50: #f5f3ff,
+    100: #ede9fe,
+    200: #ddd6fe,
+    300: #c4b5fd,
+    400: #a78bfa,
+    500: #8b5cf6,
+    // Modern Violet
+    600: #7c3aed,
+    700: #6d28d9,
+    800: #5b21b6,
+    900: #4c1d95,
+    contrast: (50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+    )
+);
+
+// Custom Blue Palette
+$blue-palette: (
+    50: #eff6ff,
+    100: #dbeafe,
+    200: #bfdbfe,
+    300: #93c5fd,
+    400: #60a5fa,
+    500: #3b82f6,
+    // Modern Blue
+    600: #2563eb,
+    700: #1d4ed8,
+    800: #1e40af,
+    900: #1e3a8a,
+    contrast: (50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+    )
+);
+
+// Custom Red Palette (M2)
+$red-palette: (
+    50: #ffebee,
+    100: #ffcdd2,
+    200: #ef9a9a,
+    300: #e57373,
+    400: #ef5350,
+    500: #f44336,
+    600: #e53935,
+    700: #d32f2f,
+    800: #c62828,
+    900: #b71c1c,
+    contrast: (50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+    )
+);
+
+// Define Palettes (M2 Prefix)
+$app-primary: mat.m2-define-palette($violet-palette, 500);
+$app-accent: mat.m2-define-palette($blue-palette, 500);
+$app-warn: mat.m2-define-palette($red-palette);
+
+// Typography (M2 Prefix)
+$app-typography: mat.m2-define-typography-config($font-family: '"Cairo", "Roboto", "Helvetica Neue", sans-serif',
+        $headline-1: mat.m2-define-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
+        $headline-2: mat.m2-define-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+        $headline-3: mat.m2-define-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
+        $headline-4: mat.m2-define-typography-level(34px, 40px, 400),
+        $headline-5: mat.m2-define-typography-level(24px, 32px, 400),
+        $headline-6: mat.m2-define-typography-level(20px, 32px, 500),
+        $subtitle-1: mat.m2-define-typography-level(16px, 28px, 400),
+        $body-1: mat.m2-define-typography-level(14px, 20px, 400),
+        $body-2: mat.m2-define-typography-level(14px, 20px, 500),
+        $button: mat.m2-define-typography-level(14px, 36px, 500, $letter-spacing: 0.05em),
+        $caption: mat.m2-define-typography-level(12px, 20px, 400),
+    );
+
+// Create Theme (M2 Prefix)
+$app-theme: mat.m2-define-light-theme((color: (primary: $app-primary,
+                accent: $app-accent,
+                warn: $app-warn,
+            ),
+            typography: $app-typography,
+        ));
+
+// Include Theme Styles
+@include mat.core();
+@include mat.all-component-themes($app-theme);
+@include mat.typography-hierarchy($app-typography);
+
+// Global Material Overrides
+.mat-mdc-button,
+.mat-mdc-raised-button {
+    font-family: "Cairo", sans-serif !important;
+}

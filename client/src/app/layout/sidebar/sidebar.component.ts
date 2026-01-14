@@ -3,12 +3,12 @@ import { Router, NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import {
   Component,
-  Inject,
   ElementRef,
   OnInit,
   Renderer2,
   HostListener,
   OnDestroy,
+  inject,
 } from '@angular/core';
 import { SideMenuRouts } from './sidebar-items';
 import { AuthService, Role } from '@core';
@@ -17,9 +17,15 @@ import { RouteInfo } from './sidebar.metadata';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class SidebarComponent implements OnInit, OnDestroy {
+  private document = inject<Document>(DOCUMENT);
+  private renderer = inject(Renderer2);
+  elementRef = inject(ElementRef);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   public sidebarItems!: RouteInfo[];
   public innerHeight?: number;
   public bodyTag!: HTMLElement;
@@ -32,13 +38,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   headerHeight = 60;
   currentRoute?: string;
   routerObj;
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private renderer: Renderer2,
-    public elementRef: ElementRef,
-    private authService: AuthService,
-    private router: Router
-  ) {
+  constructor() {
     this.elementRef.nativeElement.closest('body');
     this.routerObj = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -78,14 +78,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
       const userRole = this.authService.currentUserValue.role;
 
       this.userFullName = '-----';
-      if (this.authService.currentUserValue.role == 'Admin')
+      if (this.authService.currentUserValue.role == 'admin')
         this.userFullName = 'مدير النظام';
 
-      if (this.authService.currentUserValue.role == 'StoreKeeper')
+      if (this.authService.currentUserValue.role == 'store')
         this.userFullName = 'مسؤول مخزن';
       if (this.authService.currentUserValue.role == 'Accountant')
         this.userFullName = 'محاسب ';
-
+      if (this.authService.currentUserValue.role == 'seller')
+        this.userFullName = 'مسؤول مبيعات ';
       this.branchTitle = this.authService.currentUserValue.branchTitle;
 
       // console.log(this.authService.currentUserValue);

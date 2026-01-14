@@ -1,0 +1,19 @@
+<div class="container">
+  <h1 mat-dialog-title class="title">قم بتقريب الباركود من عدسة الكامرة</h1>
+
+  <div mat-dialog-content>
+    <zxing-scanner
+      [formats]="allowedFormats"
+      [torch]="torchEnabled"
+      [(device)]="currentDevice"
+      (scanSuccess)="onCodeResult($event)"
+      [tryHarder]="tryHarder"
+      (permissionResponse)="onHasPermission($event)"
+      (camerasFound)="onCamerasFound($event)"
+      (torchCompatible)="onTorchCompatible($event)"
+    ></zxing-scanner>
+  </div>
+  <div mat-dialog-actions class="btn-container">
+    <button class="no-btn" mat-button (click)="onNoClick()">أغلاق</button>
+  </div>
+</div>

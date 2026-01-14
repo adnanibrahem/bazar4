@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   UntypedFormBuilder,
@@ -26,24 +26,22 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-  ]
+  ],
 })
 export class SigninComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private formBuilder = inject(UntypedFormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+
   authForm!: UntypedFormGroup;
   submitted = false;
   loading = false;
   error = '';
   hide = true;
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService
-  ) {
-    super();
-  }
 
   ngOnInit() {
     this.authService.setCurrentUserValue({} as User);
@@ -81,7 +79,7 @@ export class SigninComponent
                 lUser.role = Role.Accountant;
                 tUrl = '/acc/agents';
               } else if (s.includes('9')) {
-                lUser.role = Role.StoreKeeper;
+                lUser.role = Role.Store;
                 tUrl = '/strkepr/purchas';
               } else this.router.navigate(['/authentication/signin']);
 

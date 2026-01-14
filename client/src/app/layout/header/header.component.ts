@@ -1,10 +1,10 @@
 import { DOCUMENT } from '@angular/common';
 import {
   Component,
-  Inject,
   ElementRef,
   OnInit,
   Renderer2,
+  inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigService } from '@config';
@@ -29,11 +29,22 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class HeaderComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private document = inject<Document>(DOCUMENT);
+  private renderer = inject(Renderer2);
+  elementRef = inject(ElementRef);
+  private configService = inject(ConfigService);
+  dialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private http = inject(MyHTTP);
+  private router = inject(Router);
+  languageService = inject(LanguageService);
+
   public config!: InConfiguration;
 
   curYear = 1;
@@ -50,19 +61,6 @@ export class HeaderComponent
   isFullScreen = false;
   isDarkSidebar = false;
   selectedBgColor = 'white';
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private renderer: Renderer2,
-    public elementRef: ElementRef,
-    private configService: ConfigService,
-    public dialog: MatDialog,
-    private authService: AuthService,
-    private http: MyHTTP,
-    private router: Router,
-    public languageService: LanguageService
-  ) {
-    super();
-  }
 
   loadCommercialYear() {
     this.http.list('users', 'commercialYear/list').subscribe((e: any) => {
@@ -108,7 +106,7 @@ export class HeaderComponent
 
     this.docElement = document.documentElement;
 
-    if (userRole === 'Admin') {
+    if (userRole === 'admin') {
       this.homePage = 'pages/';
     }
 
@@ -122,7 +120,7 @@ export class HeaderComponent
       data: {},
       direction: 'rtl',
     });
-    this.subs.sink = dialogRef.afterClosed().subscribe(() => { });
+    this.subs.sink = dialogRef.afterClosed().subscribe(() => {});
   }
 
   callFullscreen() {

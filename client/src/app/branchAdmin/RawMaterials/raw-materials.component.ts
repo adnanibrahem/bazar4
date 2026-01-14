@@ -1,6 +1,7 @@
+/* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,11 +18,18 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-raw-materials',
   templateUrl: './raw-materials.component.html',
   styleUrls: ['./raw-materials.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class RawMaterialsComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private http = inject(MyHTTP);
+  private fb = inject(UntypedFormBuilder);
+  private dialog = inject(MatDialog);
+  auth = inject(AuthService);
+  private datePipe = inject(DatePipe);
+
   dataSource: MatTableDataSource<RawMaterialItem> = new MatTableDataSource();
 
   @ViewChild('pagi') pagi!: MatPaginator;
@@ -84,15 +92,6 @@ export class RawMaterialsComponent
 
   appApi = 'store';
   appApiURL = 'rawMaterial/';
-  constructor(
-    private http: MyHTTP,
-    private fb: UntypedFormBuilder,
-    private dialog: MatDialog,
-    public auth: AuthService,
-    private datePipe: DatePipe
-  ) {
-    super();
-  }
 
   isloading = false;
   cmYear: CommercialYear = {} as CommercialYear;
@@ -107,7 +106,7 @@ export class RawMaterialsComponent
         this.LoadItem();
       }
     });
-    if (this.auth.role == 'StoreKeeper') {
+    if (this.auth.role == 'store') {
       this.displayedColumns = [
         'seq',
         'title',
@@ -263,7 +262,15 @@ export class RawMaterialsComponent
     });
   }
 
-  dipBoxDetaise = ['sq', 'balance', 'type', 'quantity', 'price', 'date', 'comments'];
+  dipBoxDetaise = [
+    'sq',
+    'balance',
+    'type',
+    'quantity',
+    'price',
+    'date',
+    'comments',
+  ];
 
   itemsListDet: StoreItemDetails[] = [];
   itemsDetals: MatTableDataSource<StoreItemDetails> = new MatTableDataSource();

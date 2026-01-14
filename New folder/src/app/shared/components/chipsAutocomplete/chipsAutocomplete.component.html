@@ -1,0 +1,31 @@
+<mat-form-field class="example-full-width mb-3" appearance="outline">
+  <mat-label>{{ placeholder }}</mat-label>
+  <mat-chip-grid #chipGrid aria-label="item selection">
+    @for (item of items; track $index) {
+    <mat-chip-row (removed)="remove(item)">
+      @if (dataKey === '') {
+      <span> {{ item }}</span>
+      } @if (dataKey !== '') {
+      <span> {{ item[dataKey] }}</span>
+      }
+      <button matChipRemove [attr.aria-label]="'remove ' + item">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    }
+  </mat-chip-grid>
+  <input [placeholder]="placeholder" #itemInput [formControl]="itemCtrl" [matChipInputFor]="chipGrid"
+    [matAutocomplete]="auto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    (matChipInputTokenEnd)="add($event)" />
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    @for (item of (filtereditems | async) ?? []; track $index) {
+    <mat-option [value]="item">
+      @if (dataKey === '') {
+      <span> {{ item }}</span>
+      } @if (dataKey !== '') {
+      <span> {{ item[dataKey] }}</span>
+      }
+    </mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

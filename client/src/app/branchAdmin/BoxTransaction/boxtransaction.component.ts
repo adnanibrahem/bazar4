@@ -1,6 +1,7 @@
+/* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +21,6 @@ import {
   BoxTransaction,
   Category,
   Documents,
-  SubAcountant,
 } from '../branchAdmin.model';
 import { CommercialYear } from 'app/admin/admin.model';
 
@@ -28,11 +28,19 @@ import { CommercialYear } from 'app/admin/admin.model';
   selector: 'app-boxtransaction',
   templateUrl: './boxtransaction.component.html',
   styleUrls: ['./boxtransaction.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class BoxTransactionComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
+  private http = inject(MyHTTP);
+  private fb = inject(UntypedFormBuilder);
+  private dialog = inject(MatDialog);
+  protected sanitizer = inject(DomSanitizer);
+  private auth = inject(AuthService);
+  private datePipe = inject(DatePipe);
+
   dataSource: MatTableDataSource<BoxTransaction> = new MatTableDataSource();
   @ViewChild('paginator') pagi!: MatPaginator;
   @ViewChild('pagBoxDetails') pagBoxDetails!: MatPaginator;
@@ -86,16 +94,6 @@ export class BoxTransactionComponent
 
   appApi = 'box';
   appApiURL = 'boxTransaction/';
-  constructor(
-    private http: MyHTTP,
-    private fb: UntypedFormBuilder,
-    private dialog: MatDialog,
-    protected sanitizer: DomSanitizer,
-    private auth: AuthService,
-    private datePipe: DatePipe
-  ) {
-    super();
-  }
   cmYear: CommercialYear = {} as CommercialYear;
 
   dipBoxDetaise = [
@@ -312,7 +310,7 @@ export class BoxTransactionComponent
 
   editCall(ed: BoxTransaction) {
     this.varBTrx = ed;
-    this.varBTrx.fromAmountComma = ed.toAmount
+    this.varBTrx.fromAmountComma = ed.toAmount;
     this.caption = ' تعديل بيانات حركة حسابات ';
 
     this.selectedIndex = 1;
@@ -360,7 +358,6 @@ export class BoxTransactionComponent
       this.totalMoney += k.fromAmount;
     });
   }
-
 
   onSubmit() {
     const dt = this.varBTrx;

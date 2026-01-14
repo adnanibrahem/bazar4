@@ -1,0 +1,178 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="title"> </app-breadcrumb>
+    </div>
+
+    <div class="row">
+      <mat-tab-group [selectedIndex]="selectedIndex">
+        <mat-tab label="1">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left ms-0">
+                    <li class="tbl-title">
+                      <h2>البحث</h2>
+                    </li>
+                    <li class="tbl-search-box">
+                      <label for="search-input">
+                        <i class="material-icons search-icon" matSuffix>
+                          search</i>
+                      </label>
+                      <input placeholder="اكتب شيء للبحث" type="text" matInput (keyup)="applyFilter($event)"
+                        class="browser-default search-field" aria-label="Search box" />
+                    </li>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" تسجيل تبويب">
+                        <button type="button" class="btn btn-warning" (click)="addNew()">
+                          <i class="fa fa-plus"></i>
+                          تسجيل تبويب
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body overflow-auto">
+                <div class="responsive_table">
+                  <table mat-table [dataSource]="dataSource" class="mat-cell advance-table">
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ i + 1 }}</mat-cell> </ng-container><ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        عنوان التبويب
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> عنوان التبويب:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="inProfit">
+                      <mat-header-cell *matHeaderCellDef>
+                        ضمن الربح
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> ضمن الربح:</span>
+                        @if (row.inProfit) {
+                        <span> ضمن حساب الارباح </span>
+                        } @if (!row.inProfit) {
+                        <span> لا يدخل ضمن حساب الارباح </span>
+                        }
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                      <mat-header-cell *matHeaderCellDef class="pr-0">الاجراء</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index" class="pr-0">
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="editCall(row)" class="tbl-action-btn" matTooltip="تعديل">
+                          <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'">
+                          </app-feather-icons>
+                        </button>
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="deleteItem(i, row)" class="tbl-action-btn" matTooltip="حذف">
+                          <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'">
+                          </app-feather-icons>
+                        </button>
+                      </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns" (click)="showInfo(row)"
+                      [style.cursor]="'pointer'" matRipple>
+                    </mat-row>
+                  </table>
+                  <!-- Loading spinner -->
+                  @if (showSpinner) {
+                  <div class="tbl-spinner">
+                    <mat-progress-spinner color="accent" [diameter]="40" mode="indeterminate">
+                    </mat-progress-spinner>
+                  </div>
+                  } @if (showSpinner) {
+                  <div class="no-results" [style.display]="
+                      dataSource.filteredData.length === 0 ? '' : 'none'
+                    ">
+                    No results
+                  </div>
+                  }
+                  <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="2">
+          @if (selectedIndex === 1) {
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button type="button" class="btn btn-danger" (click)="selectedIndex = 0">
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <form class="m-4" [formGroup]="gFormGroup" (ngSubmit)="onSubmit()">
+                  <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label> عنوان التبويب </mat-label>
+                        <input matInput type="text " formControlName="title" placeholder="عنوان التبويب" required />
+                        @if (gFormGroup.get('title')?.hasError('required')) {
+                        <mat-error> هذا الحقل مطلوب </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-2 col-sm-2 fs-5">
+                      <mat-label style="display: block">
+                        نوع التبوين:</mat-label>
+                      <mat-radio-group formControlName="inProfit">
+                        <mat-radio-button [value]="true">
+                          <span class="optSelect">ضمن حساب الارباح </span>
+                        </mat-radio-button>
+                        <mat-radio-button [value]="false">
+                          <span class="optSelect">لا يدخل ضمن حساب الارباح
+                          </span>
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                      <button class="btn-space" [disabled]="!gFormGroup.valid || showSpinner" mat-raised-button
+                        color="primary">
+                        حفظ البيانات
+                      </button>
+                      <button type="button" mat-raised-button color="warn" (click)="selectedIndex = 0">
+                        الغاء
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          }
+        </mat-tab></mat-tab-group>
+    </div>
+  </div>
+</section>

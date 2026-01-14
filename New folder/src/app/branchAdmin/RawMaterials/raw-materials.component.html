@@ -1,0 +1,429 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="title"> </app-breadcrumb>
+    </div>
+
+    <div class="row">
+      <mat-tab-group [selectedIndex]="selectedIndex">
+        <mat-tab label="1">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left ms-0">
+                    <li class="tbl-title">
+                      <h2>البحث</h2>
+                    </li>
+                    <li class="tbl-search-box">
+                      <label for="search-input">
+                        <i class="material-icons search-icon" matSuffix>
+                          search</i>
+                      </label>
+                      <input placeholder="اكتب شيء للبحث" type="text" matInput (keyup)="applyFilter($event)"
+                        class="browser-default search-field" aria-label="Search box" />
+                    </li>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <!-- <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="خزن على ملف PDF">
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          (click)="sendToPdf()"
+                        >
+                          <i class="bi bi-file-earmark-pdf-fill"></i>
+                          PDF
+                          @if (isloading) {
+                          <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          }
+                        </button>
+                      </div>
+                    </li> -->
+
+                    @if (auth.role !== 'StoreKeeper') {
+                    <li class="tbl-header-btn m-4">
+                      <h6>
+                        المجموع : {{ totalItemsCost | number : "1.0-0" }} دع
+                      </h6>
+                    </li>
+                    }
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip=" تسجيل مادة اولية">
+                        <button type="button" class="btn btn-warning" (click)="addNew()">
+                          <i class="fa fa-plus"></i>
+                          تسجيل مادة اولية
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body overflow-auto">
+                <div class="responsive_table">
+                  <table mat-table [dataSource]="dataSource" class="mat-cell advance-table">
+                    <ng-container matColumnDef="seq">
+                      <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index">
+                        <span class="mobile-label"> التسلسل:</span>
+                        {{ pagi.pageIndex * pagi.pageSize + i + 1 }}
+                      </mat-cell> </ng-container><ng-container matColumnDef="title">
+                      <mat-header-cell *matHeaderCellDef>
+                        اسم المادة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> اسم المادة:</span>
+                        {{ row.title }}
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="unitTitle">
+                      <mat-header-cell *matHeaderCellDef>
+                        وحدة القياس
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> وحدة القياس:</span>
+                        {{ row.unitTitle }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="initQuantity">
+                      <mat-header-cell *matHeaderCellDef>
+                        بداية الرصيد
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> بداية الرصيد:</span>
+                        {{ row.initQuantity | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                      <mat-header-cell *matHeaderCellDef>
+                        الرصيد الحالي
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> الرصيد الحالي:</span>
+                        {{ row.quantity | number }}
+                      </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="unitCostPrice">
+                      <mat-header-cell *matHeaderCellDef>
+                        معدل الكلفة
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> معدل الكلفة:</span>
+                        {{ row.unitCostPrice | number : "1.0-1" }} دع
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                      <mat-header-cell *matHeaderCellDef>
+                        المجموع
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <span class="mobile-label"> المجموع:</span>
+                        {{ row.total | number : "1.0-0" }} دع
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                      <mat-header-cell *matHeaderCellDef class="pr-0">الاجراء</mat-header-cell>
+                      <mat-cell *matCellDef="let row; let i = index" class="pr-0">
+                        <button mat-icon-button color="secondry" (click)="$event.stopPropagation()"
+                          (click)="detailsProject(row)" class="tbl-action-btn" matTooltip="التفاصيل"
+                          [disabled]="row.spinner">
+                          @if (!row.spinner) {
+                          <app-feather-icons [icon]="'info'" [class]="'tbl-fav-edit'">
+                          </app-feather-icons>
+                          } @if (row.spinner) {
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          }
+                        </button>
+
+                        @if (curUser.privilege === 'accountant') {
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="editCall(row)" class="tbl-action-btn" matTooltip="تعديل">
+                          <app-feather-icons [icon]="'edit'" [class]="'tbl-fav-edit'">
+                          </app-feather-icons>
+                        </button>
+                        }
+                        @if (curUser.privilege === 'accountant') {
+                        <button mat-icon-button color="accent" (click)="$event.stopPropagation()"
+                          (click)="deleteItem(i, row)" class="tbl-action-btn" matTooltip="حذف">
+                          <app-feather-icons [icon]="'trash-2'" [class]="'tbl-fav-delete'">
+                          </app-feather-icons>
+                        </button>
+                        }
+                      </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns" [style.cursor]="'pointer'" matRipple>
+                    </mat-row>
+                  </table>
+
+                  <!-- Loading spinner -->
+                  @if (showSpinner) {
+                  <div class="tbl-spinner">
+                    <mat-progress-spinner color="accent" [diameter]="40" mode="indeterminate">
+                    </mat-progress-spinner>
+                  </div>
+                  } @if (showSpinner) {
+                  <div class="no-results" [style.display]="
+                      dataSource.filteredData.length === 0 ? '' : 'none'
+                    ">
+                    No results
+                  </div>
+                  }
+                  <mat-paginator #pagi [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="2">
+          @if (selectedIndex === 1) {
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>{{ caption }}</h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button type="button" class="btn btn-danger" (click)="selectedIndex = 0">
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <form class="m-4" [formGroup]="gFormGroup" (ngSubmit)="onSubmit()">
+                  <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label> اسم المادة </mat-label>
+                        <input matInput type="text" formControlName="title" placeholder=" اسم المادة" required />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label> وحدة القياس </mat-label>
+                        <input matInput type="text" formControlName="unitTitle" placeholder=" وحدة القياس " required />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>
+                          بداية الرصيد
+                          @if (gFormGroup.get('initQuantity')!.value > 0) {
+                          <span style="color: red; font-size: 150%">
+                            (
+                            {{ gFormGroup.get("initQuantity")!.value | number }}
+                            )
+                          </span>
+                          }
+                        </mat-label>
+                        <input matInput type="number" formControlName="initQuantity" placeholder="بداية الرصيد" required
+                          (keyup.enter)="
+                            gFormGroup
+                              .get('initQuantity')!
+                              .setValue(
+                                gFormGroup.get('initQuantity')!.value * 1000
+                              )
+                          " />
+                        @if (gFormGroup.get('initQuantity')?.hasError('required')) {
+                        <mat-error> هذا الحقل مطلوب </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    @if (auth.role !== 'StoreKeeper') {
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>
+                          معدل الكلفة
+                          @if (gFormGroup.get('unitCostPrice')!.value > 0) {
+                          <span style="color: red; font-size: 150%">
+                            (
+                            {{
+                            gFormGroup.get("unitCostPrice")!.value | number
+                            }}
+                            )
+                          </span>
+                          }
+                        </mat-label>
+                        <input matInput type="number" formControlName="unitCostPrice" placeholder=" معدل الكلفة"
+                          required (keyup.enter)="
+                            gFormGroup
+                              .get('unitCostPrice')!
+                              .setValue(
+                                gFormGroup.get('unitCostPrice')!.value * 1000
+                              )
+                          " />
+                        @if (gFormGroup.get('unitCostPrice')?.hasError('required')) {
+                        <mat-error> هذا الحقل مطلوب </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    }
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                      <button class="btn-space" [disabled]="!gFormGroup.valid || showSpinner" mat-raised-button
+                        color="primary">
+                        حفظ البيانات
+                      </button>
+                      <button type="button" mat-raised-button color="warn" (click)="selectedIndex = 0">
+                        الغاء
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          }
+        </mat-tab>
+
+        <mat-tab label="2">
+          @if (selectedIndex === 2) {
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+              <div class="materialTableHeader">
+                <div class="left">
+                  <ul class="header-buttons-left m-r-10">
+                    <h5>
+                      {{ caption }}
+                    </h5>
+                  </ul>
+                </div>
+                <div class="right">
+                  <ul class="tbl-export-btn">
+                    @if (curUser.privilege === 'branchAccountant') {
+                    <div class="m-l-10" matTooltip="خزن على ملف PDF">
+                      <button type="button" class="btn btn-info" (click)="sendDetailsToPdf()">
+                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                        PDF
+                        @if (isloadingDetails) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
+                      </button>
+                    </div>
+                    }
+                    <li class="tbl-header-btn">
+                      <div class="m-l-10" matTooltip="رجوع">
+                        <button type="button" class="btn btn-danger" (click)="selectedIndex = 0">
+                          <i class="fa fa-arrow-right"></i> رجوع
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="body">
+                <div class="overflow-auto">
+                  <div class="responsive_table">
+                    <table mat-table [dataSource]="itemsDetals" class="mat-cell advance-table">
+                      <ng-container matColumnDef="sq">
+                        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                        <mat-cell *matCellDef="let row; let i = index">
+                          <span class="mobile-label"> التسلسل:</span>
+                          {{ i + 1 }}</mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="balance">
+                        <mat-header-cell *matHeaderCellDef>
+                          الرصيد
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الرصيد :</span>
+                          <span class="balance">
+                            {{ row.balance | number }}
+                          </span>
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef>
+                          العملية
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> العملية</span>
+                          {{ row.type }}
+                        </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="price">
+                        <mat-header-cell *matHeaderCellDef>
+                          السعر
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> السعر</span>
+                          @if (row.price) {
+                          <span> {{ row.price | number }} دع </span>
+                          }
+
+                        </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="quantity">
+                        <mat-header-cell *matHeaderCellDef>
+                          العدد
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> العدد</span>
+                          {{ row.quantity }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="date">
+                        <mat-header-cell *matHeaderCellDef>
+                          التاريخ
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> التاريخ:</span>
+                          {{ row.date | date : "yyyy-MM-dd" }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="comments">
+                        <mat-header-cell *matHeaderCellDef>
+                          الملاحظات
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span class="mobile-label"> الملاحظات:</span>
+                          {{ row.comments }}
+                        </mat-cell>
+                      </ng-container>
+
+                      <mat-header-row *matHeaderRowDef="dipBoxDetaise"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: dipBoxDetaise" [style.cursor]="'pointer'" matRipple>
+                      </mat-row>
+                    </table>
+
+                    <mat-paginator #pagBoxDetails [length]="itemsDetals.data.length" [pageIndex]="0" [pageSize]="10"
+                      [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</section>

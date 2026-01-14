@@ -1,7 +1,7 @@
 export enum Role {
-  Admin = 'Admin',
-  // Partner = 'Partner',
-  // BranchAdmin = 'BranchAdmin',
+  Admin = 'admin',
+  Agent = 'agent',
+  Seller = 'seller',
   Accountant = 'Accountant',
-  StoreKeeper = 'StoreKeeper',
+  Store = 'store',
 }
