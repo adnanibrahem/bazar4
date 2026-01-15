@@ -1,16 +1,18 @@
+/* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Component, inject } from '@angular/core';
-import { Fatora } from 'app/branchAdmin/branchAdmin.model';
+import { Fatora } from 'app/Accountant/Accountant.model';
 
 @Component({
   selector: 'app-show-fatora-items-dialog',
   templateUrl: './show-fatora-items.component.html',
   styleUrls: ['./show-fatora-items.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class ShowFatoraItemsDialogComponent {
-  dialogRef = inject<MatDialogRef<ShowFatoraItemsDialogComponent>>(MatDialogRef);
+  dialogRef =
+    inject<MatDialogRef<ShowFatoraItemsDialogComponent>>(MatDialogRef);
   data = inject<Fatora>(MAT_DIALOG_DATA);
 
   items = '';
@@ -26,7 +28,7 @@ export class ShowFatoraItemsDialogComponent {
   imgClick(x: any) {
     window.open(x.img);
   }
-  submit() { }
+  submit() {}
   onNoClick(): void {
     this.dialogRef.close();
   }

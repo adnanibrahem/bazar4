@@ -79,10 +79,10 @@ class UsersInfoSerializer(serializers.ModelSerializer):
     enable = SerializerMethodField()
 
     #   3 = admin
-    #   4 = partner
-    #   9 = branchAdmin
+    #   4 = agent
+    #   9 = seller
     #   2 = accountant
-    #   8 = subAccountant
+    #   8 = store
 
     def get_optionTime(self, obj):
         if obj.auth:
@@ -90,19 +90,19 @@ class UsersInfoSerializer(serializers.ModelSerializer):
                 cipher = self.getRstCode('012456789', '3')
                 return cipher
 
-            if obj.privilege == 'partner':
+            if obj.privilege == 'agent':
                 cipher = self.getRstCode('01256789', '4')
                 return cipher
 
-            if obj.privilege == 'branchAdmin':
+            if obj.privilege == 'seller':
                 cipher = self.getRstCode('0125678', '9')
                 return cipher
 
             if obj.privilege == 'accountant':
                 cipher = self.getRstCode('015678', '2')
                 return cipher
-            
-            if obj.privilege == 'subAccountant':
+
+            if obj.privilege == 'store':
                 cipher = self.getRstCode('01567', '8')
                 return cipher
 

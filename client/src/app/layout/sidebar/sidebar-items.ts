@@ -92,4 +92,20 @@ export const SideMenuRouts: RouteInfo[] = [
     submenu: [],
     selected: false,
   },
+
+  //  Seller Modules
+  {
+    path: '/seller/agents/',
+    title: ' العملاء',
+    iconType: 'bootstrap', /// 'feather',
+    icon: 'bi bi-people sidebarIcon sidebarIconColor',
+    class: '',
+    index: 7,
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['Seller'],
+    submenu: [],
+    selected: false,
+  },
 ];

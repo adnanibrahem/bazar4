@@ -29,9 +29,19 @@ const routes: Routes = [
           role: [Role.Accountant],
         },
         loadChildren: () =>
-          import('./branchAdmin/branchAdmin.module').then(
-            (m) => m.BranchAdminModule
+          import('./Accountant/Accountant.module').then(
+            (m) => m.AccountantModule
           ),
+      },
+
+      {
+        path: 'seller',
+        canActivate: [AuthGuard],
+        data: {
+          role: [Role.Seller],
+        },
+        loadChildren: () =>
+          import('./Seller/Seller.module').then((m) => m.SellerModule),
       },
     ],
   },
