@@ -3,19 +3,41 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.serializers import SerializerMethodField
 
-from Apps.Agents.models import Agents,  Fatora, FatoraItems
+from Apps.Agents.models import Agents, Branch, CommercialYear,  Fatora, FatoraItems
 from Apps.Users.models import Users
 
-
- 
 
 user_profile = User
 
 
 class AgentsSerializer(serializers.ModelSerializer):
+    loginName = SerializerMethodField()
+
+    def get_loginName(self, obj):
+        usr = Users.objects.filter(agent=obj.pk)
+        if usr.count() > 0:
+            return usr[0].auth.username
+        return ''
+
     class Meta:
         verbose_name = 'Agents List'
         model = Agents
+        fields = '__all__'
+
+
+class BranchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        verbose_name = 'Branch List'
+        model = Branch
+        fields = '__all__'
+
+
+class CommercialYearSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        verbose_name = 'CommercialYear List'
+        model = CommercialYear
         fields = '__all__'
 
 # ----------------------------------------------------------------------------------------

@@ -1,21 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export class Agent {
-  id!: number;
-  title!: string;
-  group!: string;
-  vehicle!: string;
+export interface Agent {
+  id: number;
+  title: string;
+  address: string;
+  phoneNumber: string;
+  agent: number;
+  userAuth: number;
+  yearId: number;
 
-  address!: string;
-  phoneNumber!: string;
-  initDenar!: number;
+  initId: number;
+  initDenar: number;
+  initDollar: number;
 
-  branch!: number;
-  userAuth!: number;
-  denar!: number;
+  curDenar: number;
+  curDollar: number;
 
-  initId!: number;
-  details!: [];
-  spinner!: boolean;
+  details: any;
+  loginName: string;
+  hasLoginName: boolean;
+  showSpinner: boolean;
 }
 
 export class BalanceDetails {

@@ -3,9 +3,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 
-from Apps.Agents.models import Agents, Fatora
-from Apps.Users.models import Branch, CommercialYear, Users
- 
+from Apps.Agents.models import Agents, Branch, CommercialYear, Fatora
+from Apps.Users.models import Users
+
 
 USER_MODEL = get_user_model()
 
@@ -21,7 +21,6 @@ class InitBranchBox(models.Model):
     dollae = models.FloatField(default=0)
     yearId = models.ForeignKey(CommercialYear, on_delete=models.DO_NOTHING)
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
- 
 
 
 class Category(models.Model):
@@ -36,14 +35,14 @@ class BoxTransaction(models.Model):
     fromBox = models.BooleanField(default=False)
     fromAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                   related_name='ffrrooAgent', null=True, blank=True)
-    fromCurrency= models.BooleanField(default=True)
-    
+    fromCurrency = models.BooleanField(default=True)
+
     toAmount = models.FloatField(default=0)
     toBox = models.BooleanField(default=False)
     toAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                 related_name='ttooAgent', null=True, blank=True)
-    toCurrency= models.BooleanField(default=True)
- 
+    toCurrency = models.BooleanField(default=True)
+
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,
                                  null=True, blank=True)
     comments = models.TextField(null=True, blank=True)

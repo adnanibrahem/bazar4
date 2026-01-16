@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Router, NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
@@ -83,10 +84,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
       if (this.authService.currentUserValue.role == 'store')
         this.userFullName = 'مسؤول مخزن';
-      if (this.authService.currentUserValue.role == 'Accountant')
+      if (this.authService.currentUserValue.role == 'accountant')
         this.userFullName = 'محاسب ';
       if (this.authService.currentUserValue.role == 'seller')
         this.userFullName = 'مسؤول مبيعات ';
+      if (this.authService.currentUserValue.role == 'agent')
+        this.userFullName = 'عميل ';
       this.branchTitle = this.authService.currentUserValue.branchTitle;
 
       // console.log(this.authService.currentUserValue);

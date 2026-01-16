@@ -16,10 +16,10 @@ from django.views.generic.base import View
 from django.db.models.query_utils import Q
 
 from Apps.Box.api.serializers import BoxTransactionSerializer, CategorySerializer
-from Apps.Box.models import BoxTransaction, Category, InitBranchBox  
-from Apps.Users.models import CommercialYear, Users
+from Apps.Box.models import BoxTransaction, Category, InitBranchBox
+
 from Apps.lib import getBoxBallance, getBranch, getPrivilege
-# from Apps.lib import  getBoxBallance, getBranch, getPrivilege     
+# from Apps.lib import  getBoxBallance, getBranch, getPrivilege
 
 
 user_profile = User
@@ -30,7 +30,7 @@ user_profile = User
 #         t = doMigrate(yearId,  opType)
 #         return Response(t,  status=status.HTTP_201_CREATED)
 
- 
+
 #  Category
 
 
@@ -113,7 +113,7 @@ class BoxTransactionCreate(CreateAPIView):
         request.data['yearId'] = cm[0].pk
 
         return super().post(request, *args, **kwargs)
- 
+
 
 class BoxTransactionEdit(RetrieveUpdateAPIView):
     queryset = BoxTransaction.objects.all()
@@ -142,7 +142,7 @@ class BoxInitBalance(APIView):
                 t = bnls[0]
                 t.denar = request.data['initDenar']
                 t.save()
- 
+
         return Response(True,  status=status.HTTP_201_CREATED)
 
 
@@ -162,5 +162,3 @@ class AdminGetBoxBalance(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         r = getBoxBallance(branchId, yearId, 0)
         return Response(r,  status=status.HTTP_201_CREATED)
-
- 

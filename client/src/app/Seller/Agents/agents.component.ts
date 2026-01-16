@@ -1,22 +1,20 @@
+/* eslint-disable @angular-eslint/prefer-inject */
 /* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { UnsubscribeOnDestroyAdapter } from '@shared/UnsubscribeOnDestroyAdapter';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MyHTTP } from '@core/service/myHttp.service';
 
-import { AuthService } from '@core';
+import { AuthService, User } from '@core';
+
+import { DomSanitizer } from '@angular/platform-browser';
+import { Agent, BalanceDetails } from 'app/Accountant/Accountant.model';
 import { CommercialYear } from 'app/admin/admin.model';
-import {
-  Agent,
-  BalanceDetails,
-  BoxTransaction,
-} from 'app/Accountant/Accountant.model';
 
 @Component({
   selector: 'app-agents',
@@ -38,109 +36,80 @@ export class AgentsComponent
   selectedIndex = 0;
   varAgent = {} as Agent;
   showSpinner = false;
-  gFormGroup!: UntypedFormGroup;
+  curUser: User = {} as User;
+
   caption = '';
   displayedColumns = [
     'seq',
     'title',
     'address',
     'phoneNumber',
-    'initDenar',
+    'initBalance',
     'denar',
     'actions',
   ];
   totalDenar = 0;
 
-  title = 'إدارة العملاء ';
+  title = 'الزبائن';
 
-  isloading = false;
-  sendToPdf() {
-    this.isloading = true;
-    this.http
-      .post(this.appApi, this.appApiURL + 'pdf/all', {
-        data: this.dataSource.filteredData,
-        title: 'قائمة اسماء العملاء',
-        title1: 'اسم العميل',
-        totalDenar: this.totalDenar,
-      })
-      .subscribe(
-        (e: any) => {
-          window.open(e.url, '_blank');
-          this.isloading = false;
-        },
-        () => {
-          this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
-          this.isloading = false;
-        }
-      );
-  }
-
-  newFormGroup(): UntypedFormGroup {
-    return this.fb.group({
-      id: [],
-      title: [],
-      address: [],
-      phoneNumber: [],
-      initDenar: [],
-    });
-  }
-  cloneFormGroup(dt: Agent): UntypedFormGroup {
-    return this.fb.group({
-      id: [dt.id],
-      title: [dt.title],
-      address: [dt.address],
-      branch: [dt.branch],
-      userAuth: [dt.userAuth],
-
-      phoneNumber: [dt.phoneNumber],
-      initDenar: [dt.initDenar],
-      initId: [dt.initId],
-    });
-  }
   appApi = 'agents';
   appApiURL = 'agent/';
-  private http = inject(MyHTTP);
-  private fb = inject(UntypedFormBuilder);
-  private auth = inject(AuthService);
-  private dialog = inject(MatDialog);
-  private datePipe = inject(DatePipe);
-
-  constructor() {
+  constructor(
+    private http: MyHTTP,
+    protected sanitizer: DomSanitizer,
+    private auth: AuthService,
+    private dialog: MatDialog,
+    private datePipe: DatePipe
+  ) {
     super();
   }
   cmYear: CommercialYear = {} as CommercialYear;
 
   ngOnInit(): void {
-    this.gFormGroup = this.newFormGroup();
+    this.varAgent = {} as Agent;
+    this.showSpinner = true;
+
     this.auth.getCommercialYear().subscribe((e) => {
+      this.showSpinner = false;
       this.cmYear = e;
       if (e.id > 0) this.LoadAgent();
+      this.curUser = this.auth.currentUserValue;
     });
   }
 
   getAgentBalance(k: Agent) {
+    k.hasLoginName = k.loginName != '';
     this.http
       .list(
         this.appApi,
         this.appApiURL + 'ballnce/0/' + k.id + '/' + this.cmYear.id
       )
       .subscribe((w: any) => {
-        console.log(w);
-        k.initDenar = w.initDenar;
         k.initId = w.initId;
-        k.denar = w.denar;
+
+        k.initDollar = w.initDollar;
+
+        k.curDenar = w.denar;
+        k.initDenar = w.initDenar;
+
+        k.yearId = this.cmYear.id;
         this.totalDenar += w.denar;
       });
   }
 
   LoadAgent() {
     this.showSpinner = true;
-
     this.totalDenar = 0;
-
     this.http.list(this.appApi, this.appApiURL + 'list').subscribe(
       (e: any) => {
         this.dataSource = new MatTableDataSource(e);
+
+        this.dataSource.filterPredicate = (data: any, filter: string) => {
+          const searchTerms = filter.split(' ');
+          const dataStr = JSON.stringify(data).toLowerCase();
+          return searchTerms.every((term) => dataStr.includes(term));
+        };
+
         this.dataSource.data.forEach((k) => {
           this.getAgentBalance(k);
         });
@@ -153,29 +122,86 @@ export class AgentsComponent
       }
     );
   }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  applyFilterDetails(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dsBoxDet.filter = filterValue.trim().toLowerCase();
+  }
+
   addNew() {
-    this.gFormGroup = this.newFormGroup();
-    this.caption = ' تسجيل عميل جديد ';
+    this.showOthers = false;
+    this.varAgent = {} as Agent;
+    this.caption = ' تسجيل  زبون  جديد ';
     this.selectedIndex = 1;
   }
+
+  showOthers = false;
+
   editCall(ed: Agent) {
-    this.gFormGroup = this.cloneFormGroup(ed);
-    this.caption = ' تعديل على بيانات عميل ';
+    this.varAgent = ed;
+
+    this.caption = ' تعديل على بيانات  زبون  ';
+    this.showOthers = true;
     this.selectedIndex = 1;
   }
+
+  isReload = false;
+  reloadBalance() {
+    this.isReload = true;
+    this.detailsProject(this.currRowDetails);
+  }
+  onSaveLoginName() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      height: '200px',
+      width: '300px',
+      data: {
+        txt: 'هل انت متأكد من خزن اسم الدخول لل زبون   ؟',
+        title: this.varAgent.title,
+      },
+      direction: 'rtl',
+    });
+    this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
+      if (result === 1) {
+        this.http
+          .post(this.appApi, this.appApiURL + 'active/loginpage', this.varAgent)
+          .subscribe(
+            (e: any) => {
+              if (e.error) {
+                this.http.showNotification('snackbar-danger', e.msg);
+              } else {
+                this.varAgent.hasLoginName = true;
+                this.http.showNotification(
+                  'snackbar-success',
+                  'تم الخزن بنجاح'
+                );
+              }
+            },
+            () => {
+              this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
+            }
+          );
+      }
+    });
+  }
+
   onSubmit() {
-    const dt = this.gFormGroup.getRawValue();
-    dt.group = 'other';
-    dt.vehicle = '';
+    this.varAgent.yearId = this.cmYear.id;
+    if (!this.varAgent.initDenar) this.varAgent.initDenar = 0;
 
     this.showSpinner = true;
-    if (dt.id) {
+    if (this.varAgent.id) {
       this.http
-        .updateId(this.appApi, this.appApiURL + 'edit', dt, dt.id)
+        .updateId(
+          this.appApi,
+          this.appApiURL + 'edit',
+          this.varAgent,
+          this.varAgent.id
+        )
         .subscribe(
           (e: any) => {
             const t = this.dataSource.data.findIndex((x) => x.id == e.id);
@@ -191,22 +217,25 @@ export class AgentsComponent
           }
         );
     } else {
-      this.http.create(this.appApi, this.appApiURL + 'create', dt).subscribe(
-        (e: any) => {
-          this.showSpinner = false;
-          this.dataSource.data.push(e);
-          this.getAgentBalance(e);
-          this.dataSource._updateChangeSubscription();
-          this.http.showNotification('snackbar-success', 'تم الخزن بنجاح');
-          this.selectedIndex = 0;
-        },
-        () => {
-          this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
-          this.showSpinner = false;
-        }
-      );
+      this.http
+        .create(this.appApi, this.appApiURL + 'create', this.varAgent)
+        .subscribe(
+          (e: any) => {
+            this.showSpinner = false;
+            this.dataSource.data.push(e);
+            this.getAgentBalance(e);
+            this.dataSource._updateChangeSubscription();
+            this.http.showNotification('snackbar-success', 'تم الخزن بنجاح');
+            this.selectedIndex = 0;
+          },
+          () => {
+            this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
+            this.showSpinner = false;
+          }
+        );
     }
   }
+
   deleteItem(i: number, row: Agent) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       height: '200px',
@@ -229,79 +258,106 @@ export class AgentsComponent
       }
     });
   }
-  showInfo(row: Agent) {
-    console.log(row);
+
+  deleteReportItem(i: number, row: any) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      height: '200px',
+      width: '300px',
+      data: { txt: 'هل انت متأكد الحذف  ؟', title: '' },
+      direction: 'rtl',
+    });
+    this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
+      if (result === 1) {
+        if (row.row.type === 'fatora') {
+          this.http
+            .delete('accounts', 'sales/edit', row.row.d)
+            .subscribe(() => {
+              this.detailsProject(this.currRowDetails);
+              this.http.showNotification('snackbar-success', 'تم الحدف بنجاح');
+            });
+        }
+        if (row.row.type === 'boxTransaction') {
+          this.http.delete('accounts', 'box/edit', row.row.d).subscribe(() => {
+            this.detailsProject(this.currRowDetails);
+            this.http.showNotification('snackbar-success', 'تم الحدف بنجاح');
+          });
+        }
+      }
+    });
   }
 
   dipBoxDetaise = [
     'seq',
     'denar',
-    'inOut',
     'amount',
+
+    // 'itemTitle',
+    'salePrice',
+
+    'count',
+    'inOut',
     'date',
-    'toFrom',
+
+    // 'itemCode',
     'comments',
+    'action',
   ];
 
-  parssBoxTransaction(t: BoxTransaction): string {
+  isloading = false;
+  isloadingTasded = false;
+  saveToAgentBalancePDF() {
+    this.isloading = true;
+    this.http
+      .post('agents', 'agent/pdf', {
+        balance: this.currRowDetails.curDollar.toLocaleString(),
+        agentTitle: this.caption,
+        items: this.blnsDetals,
+      })
+      .subscribe(
+        (e: any) => {
+          window.open(e.url, '_blank');
+          this.isloading = false;
+        },
+        () => {
+          this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
+          this.isloading = false;
+        }
+      );
+  }
+
+  parssBoxTransaction(t: any): string {
     let txt = '';
+
     txt = ' من ';
-    if (t.fromAgent) txt += ' عميل ' + t.fromAgentTitle;
+    if (t.fromAgent) txt += '  زبون  ' + t.fromAgentTitle;
+    else if (t.fromCustomer) txt += ' زبون ' + t.fromCustomerTitle;
     else if (t.fromBox) txt += '  الصندوق  ';
+    else if (t.fromBranchOtherAccounts)
+      txt += ' حسابات اخرى ' + t.fromBranchOtherAccountsTitle;
+    else if (t.fromMainAccountant) txt += ' حسابات صندوق الشركة ';
 
     txt += ' الى ';
-    if (t.toAgent) txt += ' عميل ' + t.toAgentTitle;
+    if (t.toAgent) txt += '  زبون  ' + t.toAgentTitle;
+    else if (t.toCustomer) txt += ' زبون ' + t.toCustomerTitle;
+    else if (t.toBranchOtherAccounts)
+      txt += ' حسابات اخرى  ' + t.toBranchOtherAccountsTitle;
+    else if (t.toMainAccountant) txt += ' حسابات اخرى  ';
     else if (t.toBox) txt += '  الصندوق  ';
     else if (t.category) txt += ' تبويب ' + t.categoryTitle;
+
     return txt;
   }
 
   blnsDetals: BalanceDetails[] = [];
   currRowDetails: Agent = {} as Agent;
 
-  payAmountBox(row: Agent) {
-    const absa = Math.abs(row.denar);
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      height: '200px',
-      width: '300px',
-      data: {
-        txt:
-          'هل انت متأكد من تسديد المبلغ ' +
-          absa.toLocaleString() +
-          ' الى العميل ؟ ',
-        title: row.title,
-      },
-      direction: 'rtl',
-    });
-    this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
-      if (result === 1) {
-        row.spinner = true;
-        this.showSpinner = true;
-        this.http
-          .post(this.appApi, this.appApiURL + 'direct/pay', {
-            id: row.id,
-            amount: absa,
-          })
-          .subscribe(
-            () => {
-              row.spinner = false;
-              this.showSpinner = false;
-              this.getAgentBalance(row);
-            },
-            () => {
-              this.showSpinner = false;
-              row.spinner = false;
-              this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
-            }
-          );
-      }
-    });
-  }
-
+  reserve: any = [];
   detailsProject(row: Agent) {
-    this.caption = 'تفاصيل رصيد العميل ' + row.title;
+    this.caption = row.title;
+    this.blnsDetals = [];
     this.currRowDetails = row;
-    this.showSpinner = true;
+    row.showSpinner = true;
+
     this.http
       .list(
         this.appApi,
@@ -310,56 +366,105 @@ export class AgentsComponent
       .subscribe(
         (w: any) => {
           row.details = w.details;
+          this.reserve = w.reserve;
+
           this.blnsDetals = [];
-          let bDenar = row.initDenar;
 
           const dinit = {} as BalanceDetails;
-          dinit.denar = bDenar;
-
+          dinit.denar = w.initBalance;
+          let bDenar = w.initBalance;
           dinit.comments = 'بداية الرصيد';
           this.blnsDetals.push(dinit);
+
           w.details.sort((a: any, b: any) => (a.date < b.date ? -1 : 1));
+
           w.details.forEach((z: any) => {
             const d = {} as BalanceDetails;
+
             const t = z.d;
+
             d.comments = t.comments;
+
             if (z.type == 'boxTransaction') {
-              if (t.fromAgent) {
-                d.inOut = 'صادر';
+              if (t.fromAgent == row.id) {
                 d.amount = t.fromAmount;
                 bDenar -= d.amount;
               }
-              if (t.toAgent) {
-                d.inOut = 'وارد';
+              if (t.toAgent == row.id) {
+                d.inOut = 'سحب';
+
                 d.amount = t.toAmount;
                 bDenar += d.amount;
               }
-              d.toFrom = this.parssBoxTransaction(t);
+              // d.comments = t.comments; //this.parssBoxTransaction(t);
             }
             if (z.type == 'fatora') {
-              d.amount = t.totalPrice;
-              if (t.fatoraType == 1) {
-                d.inOut = 'شراء مواد';
-                bDenar -= d.amount;
-              }
-              if (t.fatoraType == 2) {
-                d.inOut = 'بيع مواد';
-                bDenar += d.amount;
-              }
+              // d.inOut = 'شراء مواد';
+
+              d.inOut = t.itemTitle;
+              d.comments = t.comments;
             }
-            d.denar = bDenar;
+            if (z.type == 'returnSale') {
+              // d.inOut = 'شراء مواد';
+              d.amount = t.salePrice * t.returnInfo.returnQuantity;
+              bDenar -= d.amount;
+
+              d.inOut = 'ترجيع';
+              d.comments = t.itemTitle;
+            }
+
             d.date = z.date;
+            d.denar = bDenar;
             this.blnsDetals.push(d);
           });
+
+          this.blnsDetals.reverse();
+
           this.dsBoxDet.data = this.blnsDetals;
           this.dsBoxDet.paginator = this.pagDetails;
           this.dsBoxDet._updateChangeSubscription();
+          this.currRowDetails.curDenar = bDenar;
           this.selectedIndex = 2;
-          this.showSpinner = false;
+          row.showSpinner = false;
+          this.isReload = false;
         },
         () => {
-          this.showSpinner = false;
+          row.showSpinner = false;
         }
       );
+  }
+
+  onResetPassword() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      height: '200px',
+      width: '300px',
+      data: {
+        txt: 'هل انت متأكد من  تغيير كلمة المرور الى 12345  لل زبون   ؟',
+        title: this.varAgent.title,
+      },
+      direction: 'rtl',
+    });
+    this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
+      if (result === 1) {
+        this.http
+          .post(this.appApi, this.appApiURL + 'reset/password', this.varAgent)
+          .subscribe(
+            (e: any) => {
+              if (e.error) {
+                this.http.showNotification('snackbar-danger', e.msg);
+              } else {
+                this.varAgent.hasLoginName = true;
+                this.http.showNotification(
+                  'snackbar-success',
+                  'تم الخزن بنجاح'
+                );
+              }
+            },
+            () => {
+              this.http.showNotification('snackbar-danger', 'حدثت مشكلة ');
+            }
+          );
+      }
+    });
   }
 }

@@ -1,30 +1,37 @@
 import os
 from django.db import models
 from django.contrib.auth import get_user_model
-from Apps.Users.models import Branch, CommercialYear
- 
+
 
 USER_MODEL = get_user_model()
 
 
-def get_upload_path(instance, filename):
-    return os.path.join("postBooks", "%s" % instance.postBook.code + " %s" % instance.postBook.date.strftime("%Y-%m-%d"), filename)
+class CommercialYear(models.Model):
+    title = models.CharField(max_length=15)
+
+
+class Branch(models.Model):
+    title = models.CharField(max_length=60)
+    address = models.CharField(max_length=60)
+    phoneNumber = models.CharField(max_length=60, null=True, blank=True)
+    deleted = models.BooleanField(default=False)
 
 
 class Agents(models.Model):
     title = models.CharField(max_length=100)
-    group = models.CharField(max_length=15, default='customer')  # customer , employee
     address = models.TextField(null=True, blank=True)
     phoneNumber = models.CharField(max_length=20, null=True, blank=True)
-    loginAuth = models.ForeignKey(USER_MODEL, related_name='usedForAgentLogin', on_delete=models.DO_NOTHING, null=True, blank=True)
-    userAuth = models.ForeignKey(USER_MODEL,related_name='userAdded', on_delete=models.DO_NOTHING)
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
+    userAuth = models.ForeignKey(USER_MODEL,
+                                 related_name='userAdded',
+                                 on_delete=models.DO_NOTHING)
     deleted = models.BooleanField(default=False)
 
 
 class InitAgentsBalance(models.Model):
     agent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING)
-    denar = models.FloatField(default=0, )
+    initDenar = models.FloatField(default=0, )
+    initDollar = models.FloatField(default=0, )
     yearId = models.ForeignKey(CommercialYear, on_delete=models.DO_NOTHING)
 
 
@@ -50,7 +57,7 @@ class FatoraItems(models.Model):
     # rawMaterial = models.ForeignKey(RawMaterialItem,
     #                                 on_delete=models.DO_NOTHING,
     #                                 null=True, blank=True)
- 
+
     quantity = models.FloatField(default=0)
     uploadWeight = models.FloatField(default=0)
     downloadWeight = models.FloatField(default=0)

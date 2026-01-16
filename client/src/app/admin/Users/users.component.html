@@ -250,11 +250,9 @@
                       >
                         <mat-label>المنصب</mat-label>
                         <mat-select [(ngModel)]="curUser.privilege" required>
-                          <!-- <mat-option value="admin"> ادمن </mat-option> -->
                           <mat-option value="accountant"> محاسب </mat-option>
-                          <mat-option value="storeKeeper">
-                            مسؤول مخزن
-                          </mat-option>
+                          <mat-option value="store"> مسؤول مخزن </mat-option>
+                          <mat-option value="seller"> مسؤول مبيعات </mat-option>
                         </mat-select>
                       </mat-form-field>
                     </div>

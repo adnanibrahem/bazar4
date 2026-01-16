@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from ..models import Branch, CommercialYear,  Users
+from ..models import Users
 from rest_framework.serializers import SerializerMethodField
 import string
 import random
@@ -17,22 +17,6 @@ class pUserSerializer(serializers.ModelSerializer):
                   'first_name',
                   'last_name',
                   'is_active']
-
-
-class CommercialYearSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        verbose_name = 'CommercialYear List'
-        model = CommercialYear
-        fields = '__all__'
-
-
-class BranchSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        verbose_name = 'Branch List'
-        model = Branch
-        fields = '__all__'
 
 
 # class UsersSerializer(serializers.ModelSerializer):

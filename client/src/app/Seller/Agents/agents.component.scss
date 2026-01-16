@@ -22,9 +22,20 @@ p span {
 mat-header-cell {
   font-weight: bolder;
 }
-
 .mat-column-seq {
   flex: 0 0 50px;
+}
+
+.mat-column-lastOperation {
+  flex: 0 0 250px;
+}
+
+.mat-column-count {
+  flex: 0 0 50px;
+}
+
+.mat-column-denar {
+  flex: 0 0 130px;
 }
 
 .denar {

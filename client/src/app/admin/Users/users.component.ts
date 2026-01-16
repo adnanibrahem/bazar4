@@ -96,7 +96,7 @@ export class UsersComponent
 
   branchesList: Branch[] = [];
   LoadBranche() {
-    this.http.list(this.appApi, 'branch/list').subscribe(
+    this.http.list('agents', 'branch/list').subscribe(
       (e: any) => {
         this.branchesList = e;
       },
@@ -114,10 +114,9 @@ export class UsersComponent
 
   getPrivilegeDic(privilege: string): string {
     if (privilege == 'admin') return 'ادمن';
-    // if (privilege == 'partner') return 'شريك';
-    // if (privilege == 'branchAdmin') return 'مدير فرع';
+    if (privilege == 'seller') return 'مسؤول مبيعات';
     if (privilege == 'accountant') return 'محاسب';
-    if (privilege == 'storeKeeper') return 'مسؤول مخزن';
+    if (privilege == 'store') return 'مسؤول مخزن';
     return '';
   }
 

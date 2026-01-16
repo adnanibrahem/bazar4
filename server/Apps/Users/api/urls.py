@@ -19,11 +19,4 @@ urlpatterns = [
     path('userStatus/', views.UsersStatus.as_view()),
 
     path('makechangePlus/', views.UsersChangePasword.as_view()),
-    path('commercialYear/list/', views.CommercialYearList.as_view()),
-
-
-    path('branch/create/', views.BranchCreate.as_view()),
-    path('branch/list/', views.BranchList.as_view()),
-    path('branch/edit/<int:pk>/', views.BranchRUD.as_view()),
-
 ]

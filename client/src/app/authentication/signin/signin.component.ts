@@ -75,12 +75,15 @@ export class SigninComponent
               if (s.includes('3')) {
                 lUser.isActive = true;
                 lUser.role = Role.Admin;
-              } else if (s.includes('2')) {
-                lUser.role = Role.Accountant;
+              } else if (s.includes('4')) {
+                lUser.role = Role.Agent;
                 tUrl = '/acc/agents';
               } else if (s.includes('9')) {
-                lUser.role = Role.Store;
-                tUrl = '/strkepr/purchas';
+                lUser.role = Role.Seller;
+                tUrl = '/seller/agents';
+              } else if (s.includes('2')) {
+                lUser.role = Role.Accountant;
+                tUrl = '/acc/purchas';
               } else this.router.navigate(['/authentication/signin']);
 
               lUser.token = res.token;

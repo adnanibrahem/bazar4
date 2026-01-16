@@ -5,8 +5,8 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDe
 from rest_framework.views import APIView
 
 from Apps.lib import HasAddOnlyPermission, HasFullPermission
-from .serializers import BranchSerializer, CommercialYearSerializer, UsersInfoSerializer
-from ..models import Branch, CommercialYear,   Users
+from .serializers import UsersInfoSerializer
+from ..models import Users
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
@@ -37,21 +37,6 @@ class DownloadDatabase(APIView):
         zipf.close()
         url = 'https://ruaaalraied.com/Media/archive/StarInstitute.sqlite3.zip'
         return Response({'url': url},  status=status.HTTP_201_CREATED)
-
-
-class CommercialYearList(ListAPIView):
-    serializer_class = CommercialYearSerializer
-
-    def get_queryset(self):
-        y = datetime.now().year
-        title = str(y)
-        qr = CommercialYear.objects.filter(title=title)
-        if qr.count() == 0:
-            ac = CommercialYear(title=title)
-            ac.save()
-
-        queryset = CommercialYear.objects.all().order_by('-pk')
-        return queryset
 
 
 class Users_getAuthId(APIView):
@@ -216,40 +201,3 @@ class AgentAssistantlist(ListAPIView):
             queryset = Users.objects.filter(branch=auth)
             return queryset
         return None
-
-
-#  branches
-
-class BranchList(ListAPIView):
-    serializer_class = BranchSerializer
-    queryset = Branch.objects.filter(deleted=False)
-
-
-class BranchCreate(CreateAPIView):
-    queryset = Branch.objects.all()
-    serializer_class = BranchSerializer
-    permission_classes = [HasAddOnlyPermission]
-
-    def create(self, request, *args, **kwargs):
-        if not HasAddOnlyPermission.has_object_permission(self, request, None, None):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
-        r = super().create(request, *args, **kwargs)
-        return r
-
-
-class BranchRUD(RetrieveUpdateDestroyAPIView):
-    queryset = Branch.objects.all()
-    serializer_class = BranchSerializer
-    permission_classes = [HasFullPermission, ]
-    lookup_fields = ('pk')
-
-    def delete(self, request, *args, **kwargs):
-        if not HasFullPermission.has_object_permission(self, request, None, None):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        sp = Branch.objects.filter(pk=kwargs.get('pk'))
-        if sp.count() > 0:
-            t = sp[0]
-            t.deleted = True
-            t.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

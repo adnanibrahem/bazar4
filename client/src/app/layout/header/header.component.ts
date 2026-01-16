@@ -63,7 +63,7 @@ export class HeaderComponent
   selectedBgColor = 'white';
 
   loadCommercialYear() {
-    this.http.list('users', 'commercialYear/list').subscribe((e: any) => {
+    this.http.list('agents', 'commercialYear/list').subscribe((e: any) => {
       this.CommercialYearList = e;
       this.curYear = e[0].id;
       this.authService.setCommercialYear(e[0]);

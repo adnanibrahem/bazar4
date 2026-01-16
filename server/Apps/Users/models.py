@@ -1,14 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from Apps.Agents.models import Agents, Branch
 from Backend.lists import PRIVILEGE
 USER_MODEL = get_user_model()
-
-
-class Branch(models.Model):
-    title = models.CharField(max_length=60)
-    address = models.CharField(max_length=60)
-    phoneNumber = models.CharField(max_length=60, null=True, blank=True)
-    deleted = models.BooleanField(default=False)
 
 
 class Users(models.Model):
@@ -18,13 +12,10 @@ class Users(models.Model):
     img = models.ImageField(upload_to='users', null=True, blank=True)
     privilege = models.CharField(max_length=25, choices=PRIVILEGE,
                                  default='store')
-    agent = models.BooleanField(default=False)
+    agent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
+                              null=True, blank=True)
     deleted = models.BooleanField(default=False)
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING,
                                null=True, blank=True)
     # 1 - all permission , 2 - add only , 3 - read only
     permission = models.IntegerField(default=1, blank=True, null=True)
-
-
-class CommercialYear(models.Model):
-    title = models.CharField(max_length=15)
