@@ -136,6 +136,8 @@ export class FatoraItems {
   quantity!: number;
   unitPrice!: number;
   itemTitle!: string;
+  status!: number;
+  statusTitle!: any;
   externalURL!: string;
   pictureURL!: string;
   weight!: number;
@@ -147,10 +149,9 @@ export class Fatora {
   id!: number;
   agent!: number;
   agentInfo!: Agent;
-  status!: number;
   buyingAt!: any;
   statusTitle!: string;
-
+  showSendButton!: boolean;
   yearId!: number;
   totalPrice!: number;
   items!: FatoraItems[];

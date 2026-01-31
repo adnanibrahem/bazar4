@@ -15,7 +15,7 @@ export class AuthGuard {
   private router = inject(Router);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log(this.authService.currentUserValue);
+
     if (this.authService.currentUserValue && this.authService.currentUserValue.token) {
       const userRole = this.authService.currentUserValue.role;
 

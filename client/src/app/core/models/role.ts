@@ -1,25 +1,23 @@
-import { Fatora } from 'app/Accountant/Accountant.model';
-
 export enum Role {
-  Admin = 'admin',
-  Agent = 'agent',
-  Seller = 'seller',
-  Accountant = 'accountant',
-  Store = 'store',
+  Admin = 'admin', // مدير
+  Agent = 'agent', // وكيل
+  Seller = 'seller', // بائع
+  Accountant = 'accountant', // محاسب
+  Store = 'store', // مخزن
 }
 
-export function FatoraStuts(fd: number): string {
+export function FatoraStuts(fd: number): any {
   switch (fd) {
     case 1:
-      return 'ordering';
+      return { ar: 'طلب', en: 'ordering' };
     case 2:
-      return 'buying';
+      return { ar: 'شراء', en: 'buying' };
     case 3:
-      return 'shipping';
+      return { ar: 'الاستلام', en: 'delivering' };
     case 4:
-      return 'delivering';
+      return { ar: 'الشحن', en: 'shipping' };
     case 5:
-      return 'done';
+      return { ar: 'وصول', en: 'arriving' };
   }
 
   return '';

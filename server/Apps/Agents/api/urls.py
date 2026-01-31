@@ -21,9 +21,10 @@ urlpatterns = [
 
     path('order/', views.ShowOredrs.as_view()),
 
-    path('seller/fatora/list/', views.SellerFatoraList.as_view()),
+    path('seller/fatora/ordering/list/', views.SellerFatoraOrderingList.as_view()),
+    path('seller/fatora/sent/list/', views.SellerFatoraSentList.as_view()),
+
     path('seller/fatora/edit/<int:pk>/', views.SellerFatoraRUD.as_view()),
-    path('seller/fatora/send/<int:pk>/',
-         views.SellerFatoraSendToBuyer.as_view()),
+    path('seller/fatora/send/<int:pk>/', views.SellerFatoraSendToBuyer.as_view()),
 
 ]

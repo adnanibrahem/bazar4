@@ -12,14 +12,15 @@ import { Fatora, FatoraItems } from 'app/Accountant/Accountant.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { FatoraStuts } from '@core/models/role';
 @Component({
-  selector: 'app-fawater',
-  templateUrl: './fawater.component.html',
-  styleUrls: ['./fawater.component.scss'],
+  selector: 'app-my-orders',
+  templateUrl: 'my-orders.component.html',
+  styleUrls: ['my-orders.component.scss'],
   standalone: false,
 })
-export class FawaterComponent
+export class MyOrdersComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
   private http = inject(MyHTTP);
   private dialog = inject(MatDialog);
   private datePipe = inject(DatePipe);
@@ -57,7 +58,6 @@ export class FawaterComponent
       if (!w.deleted) k.totalPrice += w.quantity * w.unitPrice;
       if (w.status === 1) k.showSendButton = true;
     });
-
   }
   LoadFawater() {
     this.showSpinner = true;

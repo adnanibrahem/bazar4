@@ -95,6 +95,20 @@ export const SideMenuRouts: RouteInfo[] = [
 
   //  Seller Modules
   {
+    path: '/seller/sent/',
+    title: 'الطلبات المرسلة',
+    iconType: 'bootstrap',
+    icon: 'bi bi-send-check sidebarIcon sidebarIconColor',
+    class: '',
+    index: 0,
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['seller'],
+    submenu: [],
+    selected: false,
+  },
+  {
     path: '/seller/fwater/',
     title: ' فواتير المبيعات',
     iconType: 'bootstrap',

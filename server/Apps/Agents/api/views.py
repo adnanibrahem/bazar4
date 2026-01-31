@@ -9,6 +9,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAP
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import pagination
+from rest_framework import filters
 import pytz
 
 
@@ -239,13 +240,34 @@ class ShowOredrs(APIView):
         # return Response(t,  status=status.HTTP_200_OK)
 
 
-class SellerFatoraList(ListAPIView):
+class SellerFatoraOrderingList(ListAPIView):
     serializer_class = FatoraSerializer
+    def get_queryset(self):
+        br = getBranch(self.request.user.id)
+        fatoraId= FatoraItems.objects.filter(fatora__agent__branch=br.pk,
+                                            status=1,fatora__deleted=False,
+                                            deleted=False).values('fatora').distinct()
+        queryset = Fatora.objects.filter(pk__in=fatoraId,
+                                         deleted=False).order_by('-dateAt')
+        return queryset
+
+class StandardResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+class SellerFatoraSentList(ListAPIView):
+    serializer_class = FatoraSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['agent__title', 'id']
 
     def get_queryset(self):
-
         br = getBranch(self.request.user.id)
-        queryset = Fatora.objects.filter(agent__branch=br.pk,
+        fatoraId= FatoraItems.objects.filter(fatora__agent__branch=br.pk,
+                                            status__gt=1,fatora__deleted=False,
+                                            deleted=False).values('fatora').distinct()
+        queryset = Fatora.objects.filter(pk__in=fatoraId,
                                          deleted=False).order_by('-dateAt')
         return queryset
 
@@ -277,7 +299,10 @@ class SellerFatoraSendToBuyer(APIView):
         if not validUser(self.request,  pk):
             return Response(status=status.HTTP_403_FORBIDDEN)
         fr = Fatora.objects.get(pk=pk)
-        fr.status = 2
+        items = FatoraItems.objects.filter(fatora=fr.pk)
+        for x in items:
+            x.status = 2
+            x.save()
         fr.buyingAt = datetime.now((pytz.timezone('Asia/Baghdad')))
         fr.buyingBy = self.request.user
         fr.save()

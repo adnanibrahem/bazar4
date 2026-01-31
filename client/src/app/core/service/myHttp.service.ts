@@ -21,6 +21,9 @@ export class MyHTTP {
   }
 
   list(app: string, path: string) {
+    if (path.includes('?')) {
+      return this.http.get(`${environment.apiUrl}${app}/${path}`);
+    }
     return this.http.get(`${environment.apiUrl}${app}/${path}/`);
   }
 

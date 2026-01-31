@@ -39,7 +39,6 @@ class Fatora(models.Model):
     agent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING)
     dateAt = models.DateTimeField(auto_now_add=True)
     #  1= ordering , 2= buying , 3= shipping ,4 =delivering , 5= done
-    status = models.IntegerField(default=1)
     buyingAt = models.DateTimeField(null=True, blank=True)
     buyingBy = models.ForeignKey(USER_MODEL,  related_name='SentToBuy',
                                  on_delete=models.DO_NOTHING, null=True, blank=True)
@@ -51,6 +50,7 @@ class Fatora(models.Model):
 class FatoraItems(models.Model):
     fatora = models.ForeignKey(Fatora, on_delete=models.DO_NOTHING)
     description = models.TextField()
+    status = models.IntegerField(default=1)
     InternalDelivery = models.CharField(max_length=100, null=True, blank=True)
     quantity = models.FloatField(default=0)
     unitPrice = models.FloatField(default=0)

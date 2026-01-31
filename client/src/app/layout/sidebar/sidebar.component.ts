@@ -92,7 +92,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.userFullName = 'عميل ';
       this.branchTitle = this.authService.currentUserValue.branchTitle;
 
-      // console.log(this.authService.currentUserValue);
 
       this.userImg = 'assets/images/admin.jpg';
       if (this.authService.currentUserValue.img)

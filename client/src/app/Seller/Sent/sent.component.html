@@ -1,0 +1,229 @@
+<section class="content">
+    <div class="content-block">
+        <div class="block-header">
+            <app-breadcrumb [title]="title"> </app-breadcrumb>
+        </div>
+
+        <div class="row">
+            <mat-tab-group [selectedIndex]="selectedIndex">
+                <mat-tab label="1">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+                            <div class="materialTableHeader">
+                                <div class="left">
+                                    <ul class="header-buttons-left ms-0">
+                                        <li class="tbl-title">
+                                            <h2>البحث</h2>
+                                        </li>
+                                        <li class="tbl-search-box">
+                                            <label for="search-input">
+                                                <i class="material-icons search-icon" matSuffix>
+                                                    search</i>
+                                            </label>
+                                            <input id="search-input" placeholder="اكتب شيء للبحث" type="text" matInput
+                                                (keyup.enter)="applyFilter($event)" class="browser-default search-field"
+                                                aria-label="Search box" />
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="right">
+                                    <ul class="tbl-export-btn"></ul>
+                                </div>
+                            </div>
+                            <div class="body overflow-auto">
+                                <div class="responsive_table">
+                                    <table mat-table [dataSource]="dataSource" class="mat-cell advance-table">
+                                        <ng-container matColumnDef="seq">
+                                            <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                                            <mat-cell *matCellDef="let row; let i = index">
+                                                <span class="mobile-label"> التسلسل:</span>
+                                                {{ (pageIndex * pageSize) + i + 1 }}</mat-cell>
+                                        </ng-container>
+
+                                        <ng-container matColumnDef="title">
+                                            <mat-header-cell *matHeaderCellDef>
+                                                اسم العميل
+                                            </mat-header-cell>
+                                            <mat-cell *matCellDef="let row">
+                                                <span class="mobile-label"> اسم العميل:</span>
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold text-dark">{{ row.agentInfo.loginName }}</span>
+                                                    <span class="text-muted small">{{ row.agentInfo.title }}</span>
+                                                </div>
+                                            </mat-cell>
+                                        </ng-container>
+
+                                        <ng-container matColumnDef="fatiraNo">
+                                            <mat-header-cell *matHeaderCellDef>
+                                                رقم الفاتورة
+                                            </mat-header-cell>
+                                            <mat-cell *matCellDef="let row">
+                                                <span class="mobile-label"> رقم الفاتورة:</span>
+                                                {{ row.id }}
+                                            </mat-cell>
+                                        </ng-container>
+
+                                        <ng-container matColumnDef="dateAt">
+                                            <mat-header-cell *matHeaderCellDef>
+                                                التاريخ
+                                            </mat-header-cell>
+                                            <mat-cell *matCellDef="let row">
+                                                <span class="mobile-label"> التاريخ:</span>
+                                                {{ row.dateAt | date: "dd/MM/yyyy hh:mm aa" }}
+                                            </mat-cell>
+                                        </ng-container>
+
+                                        <ng-container matColumnDef="itemcont">
+                                            <mat-header-cell *matHeaderCellDef>
+                                                عدد الاصناف
+                                            </mat-header-cell>
+                                            <mat-cell *matCellDef="let row">
+                                                <span class="mobile-label"> عدد الاصناف:</span>
+                                                {{ row.items.length }}
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="totalprice">
+                                            <mat-header-cell *matHeaderCellDef>
+                                                الاجمالي
+                                            </mat-header-cell>
+                                            <mat-cell *matCellDef="let row">
+                                                <span class="mobile-label"> الاجمالي:</span>
+                                                {{ row.totalPrice | number }} $
+                                            </mat-cell>
+                                        </ng-container>
+
+                                        <ng-container matColumnDef="actions">
+                                            <mat-header-cell *matHeaderCellDef class="pr-0">الاجراء</mat-header-cell>
+                                            <mat-cell *matCellDef="let row; let i = index" class="pr-0">
+                                                <button (click)="$event.stopPropagation()" (click)="editCall(row)"
+                                                    class="btn btn-outline-primary rounded-circle btn-icon m-1"
+                                                    matTooltip="تفاصيل الفاتورة">
+                                                    <i class="bi bi-card-checklist fs-7"></i>
+                                                </button>
+
+                                                @if (row.showSendButton) {
+                                                <!-- Never shown here if logic is correct -->
+                                                <button (click)="$event.stopPropagation()"
+                                                    class="btn btn-outline-warning rounded-circle btn-icon"
+                                                    matTooltip="ارسال الطلب الى الصين">
+                                                    <i class="bi bi-send fs-7"></i>
+                                                </button>
+                                                }
+                                            </mat-cell>
+                                        </ng-container>
+                                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: displayedColumns" (click)="showInfo(row)"
+                                            [style.cursor]="'pointer'" matRipple>
+                                        </mat-row>
+                                    </table>
+                                    @if (showSpinner) {
+                                    <div class="tbl-spinner">
+                                        <mat-progress-spinner color="accent" [diameter]="40" mode="indeterminate">
+                                        </mat-progress-spinner>
+                                    </div>
+                                    }
+                                    @if (showSpinner) {
+                                    <div class="no-results" [style.display]="
+                        dataSource.filteredData.length === 0 ? '' : 'none'
+                      ">
+                                        No results
+                                    </div>
+                                    }
+                                    <mat-paginator #paginator [length]="resultsLength" [pageIndex]="pageIndex"
+                                        [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                                        (page)="onPageChanged($event)" showFirstLastButtons>
+                                    </mat-paginator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="2">
+                    @if (selectedIndex === 1) {
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                        <!-- Summary Header -->
+                        <div class="summary-header">
+                            <div>
+                                <h5>{{ caption }}</h5>
+                            </div>
+
+                            <div class="summary-stats">
+                                <div class="stat-item">
+                                    <span class="label">عدد الأصناف</span>
+                                    <span class="value">{{ currFatora.items.length }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="label">إجمالي المبلغ</span>
+                                    <span class="value">{{ currFatora.totalPrice | number }} $</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" class="btn btn-danger" (click)="selectedIndex = 0">
+                                    <i class="fa fa-arrow-right"></i> رجوع
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            @for (x of currFatora.items; track x) {
+                            @if (!x.deleted) {
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mt-1">
+                                <div class="item-card">
+                                    <a [href]="'https://bazar4plus.online/?p=item&id=' + x.InternalDelivery"
+                                        target="_blank" rel="noopener" class="card-img-wrapper">
+                                        <img [src]="x.pictureURL" [alt]="x.InternalDelivery"
+                                            referrerpolicy="no-referrer" loading="lazy" />
+                                    </a>
+
+                                    <div class="card-body">
+                                        <div class="item-title" [title]="x.itemTitle">{{ x.itemTitle }}</div>
+
+                                        <label class="form-label">الوصف: <span class="text-primary">{{ x.statusTitle?.ar
+                                                }}</span></label>
+                                        <input [disabled]="true" type="text" class="form-control mb-2"
+                                            [(ngModel)]="x.description" placeholder="وصف المنتج" />
+
+                                        <div class="price-input-group">
+                                            <span>السعر:</span>
+                                            <div class="input-group input-group-sm">
+                                                <input [disabled]="true" type="number" class="form-control no-spinners"
+                                                    [(ngModel)]="x.unitPrice" />
+                                                <span class="input-group-text">$</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="text-muted small">
+                                                الإجمالي: <span class="fw-bold text-dark">{{ x.unitPrice * x.quantity |
+                                                    number }} $</span>
+                                            </div>
+
+                                            <div class="quantity-control m-0">
+                                                <!-- Read only -->
+                                                <input [disabled]="true" type="number" class="no-spinners"
+                                                    [(ngModel)]="x.quantity" />
+                                            </div>
+                                        </div>
+
+                                        <div class="action-area">
+                                            <mat-radio-group [disabled]="true" [(ngModel)]="x.shippingType">
+                                                <mat-radio-button value="air">جوي</mat-radio-button>
+                                                <mat-radio-button value="sea">بحري</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            }
+                        </div>
+
+                    </div>
+                    }
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</section>

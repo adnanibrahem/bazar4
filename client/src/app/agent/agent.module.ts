@@ -3,10 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ComponentsModule } from '@shared/components/components.module';
 import { SharedModule } from '@shared/shared.module';
-import { AgentsComponent } from './Agents/agents.component';
-import { SellerRoutingModule } from './Seller-routing.module';
-import { SentComponent } from './Sent/sent.component';
-import { FawaterComponent } from './Fawater/fawater.component';
+
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -22,9 +19,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
+import { SellerRoutingModule } from './agent-routing.module';
+import { MyOrdersComponent } from './MyOrders/my-orders.component';
 
 @NgModule({
-  declarations: [AgentsComponent, FawaterComponent, SentComponent],
+  declarations: [MyOrdersComponent],
   imports: [
     CommonModule,
     SellerRoutingModule,
@@ -44,7 +43,7 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatCheckboxModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
 })
-export class SellerModule { }
+export class AgentModule {}
