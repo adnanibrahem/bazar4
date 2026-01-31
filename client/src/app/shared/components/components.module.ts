@@ -12,7 +12,6 @@ import { ChipsAutocompleteComponent } from './chipsAutocomplete/chipsAutocomplet
 import { BarcodeDialogComponent } from './barcodeDialog/barcode-dialog.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { NumberCommaDirective } from './number-comma.directive';
-import { ShowFatoraItemsDialogComponent } from './show-fatora-items/show-fatora-items.component';
 import { BalanceMigrationDialogComponent } from './balance-migration/balance-migration-dialog.component';
 
 @NgModule({
@@ -22,7 +21,6 @@ import { BalanceMigrationDialogComponent } from './balance-migration/balance-mig
     ConfirmDialogComponent,
     WebcamDialogComponent,
     ShowOnlyDialogComponent,
-    ShowFatoraItemsDialogComponent,
     MyAutoCompleteComponent,
     ChipsAutocompleteComponent,
     BarcodeDialogComponent,
@@ -43,4 +41,4 @@ import { BalanceMigrationDialogComponent } from './balance-migration/balance-mig
     BalanceMigrationDialogComponent,
   ],
 })
-export class ComponentsModule { }
+export class ComponentsModule {}

@@ -5,8 +5,9 @@ import { ComponentsModule } from '@shared/components/components.module';
 import { SharedModule } from '@shared/shared.module';
 import { AgentsComponent } from './Agents/agents.component';
 import { SellerRoutingModule } from './Seller-routing.module';
+import { FawaterComponent } from './Fawater/fawater.component';
 @NgModule({
-  declarations: [AgentsComponent],
+  declarations: [AgentsComponent, FawaterComponent],
   imports: [CommonModule, SellerRoutingModule, ComponentsModule, SharedModule],
 })
 export class SellerModule {}

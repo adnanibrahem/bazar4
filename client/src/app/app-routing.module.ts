@@ -12,7 +12,7 @@ const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: '/authentication/signin', pathMatch: 'full' },
+      // { path: '', redirectTo: '/authentication/signin', pathMatch: 'full' },
       {
         path: 'pages',
         canActivate: [AuthGuard],
@@ -62,5 +62,5 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-  constructor() {}
+  constructor() { }
 }

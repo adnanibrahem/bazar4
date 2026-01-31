@@ -100,7 +100,7 @@
                         {{ row.phoneNumber }}
                       </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="initBalance">
+                    <ng-container matColumnDef="initDollar">
                       <mat-header-cell *matHeaderCellDef>
                         بداية الرصيد
                       </mat-header-cell>
@@ -108,22 +108,22 @@
                         <span class="mobile-label"> بداية الرصيد :</span>
                         <div class="dispVert">
                           <span
-                            [style.color]="row.initBalance < 0 ? 'red' : ''"
+                            [style.color]="row?.initDollar < 0 ? 'red' : ''"
                           >
-                            {{ row.initBalance | number }} دع
+                            {{ row?.initDollar | number }} $
                           </span>
                         </div>
                       </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="denar">
+                    <ng-container matColumnDef="dollar">
                       <mat-header-cell *matHeaderCellDef>
                         الرصيد الحالي
                       </mat-header-cell>
                       <mat-cell *matCellDef="let row">
                         <span class="mobile-label"> الرصيد الحالي:</span>
                         <div class="dispVert">
-                          <span [style.color]="row.curBalance < 0 ? 'red' : ''">
-                            {{ row.curBalance | number }} دع
+                          <span [style.color]="row.dollar < 0 ? 'red' : ''">
+                            {{ row.curDollar | number }} $
                           </span>
                         </div>
                       </mat-cell>
@@ -144,19 +144,19 @@
                           class="tbl-action-btn"
                           matTooltip="التفاصيل"
                         >
-                          @if(!row.showSpinner){
-                          <app-feather-icons
-                            *ngIf=""
-                            [icon]="'info'"
-                            [class]="'tbl-fav-edit'"
-                          >
-                          </app-feather-icons>
-                          }@else {
-                          <span
-                            class="spinner-border spinner-border-sm"
-                            role="status"
-                            aria-hidden="true"
-                          ></span>
+                          @if (!row.showSpinner) {
+                            <app-feather-icons
+                              *ngIf=""
+                              [icon]="'info'"
+                              [class]="'tbl-fav-edit'"
+                            >
+                            </app-feather-icons>
+                          } @else {
+                            <span
+                              class="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
                           }
                         </button>
                         <button
@@ -174,21 +174,21 @@
                           </app-feather-icons>
                         </button>
 
-                        @if(row.curBalance === 0){
-                        <button
-                          mat-icon-button
-                          color="accent"
-                          (click)="$event.stopPropagation()"
-                          (click)="deleteItem(i, row)"
-                          class="tbl-action-btn"
-                          matTooltip="حذف"
-                        >
-                          <app-feather-icons
-                            [icon]="'trash-2'"
-                            [class]="'tbl-fav-delete'"
+                        @if (row.curBalance === 0) {
+                          <button
+                            mat-icon-button
+                            color="accent"
+                            (click)="$event.stopPropagation()"
+                            (click)="deleteItem(i, row)"
+                            class="tbl-action-btn"
+                            matTooltip="حذف"
                           >
-                          </app-feather-icons>
-                        </button>
+                            <app-feather-icons
+                              [icon]="'trash-2'"
+                              [class]="'tbl-fav-delete'"
+                            >
+                            </app-feather-icons>
+                          </button>
                         }
                       </mat-cell>
                     </ng-container>
@@ -204,24 +204,24 @@
                   </table>
                   <!-- Loading spinner -->
 
-                  @if(showSpinner){
-                  <div class="tbl-spinner">
-                    <mat-progress-spinner
-                      color="accent"
-                      [diameter]="40"
-                      mode="indeterminate"
-                    >
-                    </mat-progress-spinner>
-                  </div>
+                  @if (showSpinner) {
+                    <div class="tbl-spinner">
+                      <mat-progress-spinner
+                        color="accent"
+                        [diameter]="40"
+                        mode="indeterminate"
+                      >
+                      </mat-progress-spinner>
+                    </div>
 
-                  <div
-                    class="no-results"
-                    [style.display]="
-                      dataSource.filteredData.length === 0 ? '' : 'none'
-                    "
-                  >
-                    No results
-                  </div>
+                    <div
+                      class="no-results"
+                      [style.display]="
+                        dataSource.filteredData.length === 0 ? '' : 'none'
+                      "
+                    >
+                      No results
+                    </div>
                   }
                   <mat-paginator
                     #paginator
@@ -262,153 +262,153 @@
                 </div>
               </div>
               <div class="body">
-                <div class="m-4">
-                  <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-                      <mat-form-field
-                        class="example-full-width"
-                        appearance="outline"
-                      >
-                        <mat-label> اسم الزبون </mat-label>
-                        <input
-                          matInput
-                          type="text"
-                          [(ngModel)]="varAgent.title"
-                          placeholder="اسم الزبون"
-                          class="fs-5"
-                          required
-                        />
-                      </mat-form-field>
+                @if (selectedIndex === 1) {
+                  <div class="m-4">
+                    <div class="row">
+                      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                        <mat-form-field
+                          class="example-full-width"
+                          appearance="outline"
+                        >
+                          <mat-label> اسم الزبون </mat-label>
+                          <input
+                            matInput
+                            type="text"
+                            [(ngModel)]="varAgent.title"
+                            placeholder="اسم الزبون"
+                            class="fs-5"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                        <mat-form-field
+                          class="example-full-width"
+                          appearance="outline"
+                        >
+                          <mat-label> العنوان </mat-label>
+                          <input
+                            matInput
+                            type="text"
+                            [(ngModel)]="varAgent.address"
+                            placeholder="العنوان"
+                            class="fs-5"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                        <mat-form-field
+                          class="example-full-width"
+                          appearance="outline"
+                        >
+                          <mat-label> رقم الهاتف </mat-label>
+                          <input
+                            matInput
+                            type="text"
+                            [(ngModel)]="varAgent.phoneNumber"
+                            placeholder="رقم الهاتف"
+                            class="fs-5"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                        <mat-form-field
+                          class="example-full-width"
+                          appearance="outline"
+                        >
+                          <mat-label> بداية الرصيد بالدولار </mat-label>
+                          <input
+                            matInput
+                            type="number"
+                            [(ngModel)]="varAgent.initDollar"
+                            placeholder="بداية الرصيد بالدولار"
+                            required
+                            (keyup.enter)="
+                              varAgent.initDollar = varAgent.initDollar * 1000
+                            "
+                          />
+                        </mat-form-field>
+                      </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-                      <mat-form-field
-                        class="example-full-width"
-                        appearance="outline"
-                      >
-                        <mat-label> العنوان </mat-label>
-                        <input
-                          matInput
-                          type="text"
-                          [(ngModel)]="varAgent.address"
-                          placeholder="العنوان"
-                          class="fs-5"
-                          required
-                        />
-                      </mat-form-field>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                      <mat-form-field
-                        class="example-full-width"
-                        appearance="outline"
-                      >
-                        <mat-label> رقم الهاتف </mat-label>
-                        <input
-                          matInput
-                          type="text"
-                          [(ngModel)]="varAgent.phoneNumber"
-                          placeholder="رقم الهاتف"
-                          class="fs-5"
-                          required
-                        />
-                      </mat-form-field>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                      <mat-form-field
-                        class="example-full-width"
-                        appearance="outline"
-                      >
-                        <mat-label> بداية الرصيد بالدولار </mat-label>
-                        <input
-                          matInput
-                          type="number"
-                          [(ngModel)]="varAgent.initDollar"
-                          placeholder="بداية الرصيد بالدولار"
-                          required
-                          (keyup.enter)="
-                            varAgent.initDollar = varAgent.initDollar * 1000
+                    <div class="row">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                        <button
+                          class="btn-space"
+                          [disabled]="
+                            varAgent.title === undefined ||
+                            varAgent.initDollar === undefined ||
+                            varAgent.address === undefined
                           "
-                        />
-                      </mat-form-field>
+                          mat-raised-button
+                          color="primary"
+                          (click)="onSubmit()"
+                        >
+                          حفظ البيانات
+                        </button>
+                        <button
+                          type="button"
+                          mat-raised-button
+                          color="warn"
+                          (click)="selectedIndex = 0"
+                        >
+                          الغاء
+                        </button>
+                      </div>
                     </div>
                   </div>
+                }
+                @if (showOthers) {
+                  <div>
+                    <h6 class="social-login-title m-5">
+                      اسم الدخول وكلمة المرور للزبون
+                    </h6>
 
-                  <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
-                      <button
-                        class="btn-space"
-                        [disabled]="
-                          varAgent.title === undefined ||
-                          varAgent.initDollar === undefined ||
-                          varAgent.address === undefined
-                        "
-                        mat-raised-button
-                        color="primary"
-                        (click)="onSubmit()"
-                      >
-                        حفظ البيانات
-                      </button>
-                      <button
-                        type="button"
-                        mat-raised-button
-                        color="warn"
-                        (click)="selectedIndex = 0"
-                      >
-                        الغاء
-                      </button>
+                    <div class="row">
+                      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                        <mat-form-field
+                          class="example-full-width"
+                          appearance="outline"
+                        >
+                          <mat-label> اسم الدخول </mat-label>
+                          <input
+                            matInput
+                            type="text"
+                            [(ngModel)]="varAgent.loginName"
+                            placeholder="اسم الدخول"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+                      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
+                        <button
+                          class="btn-space"
+                          [disabled]="varAgent.loginName === undefined"
+                          mat-raised-button
+                          (click)="onSaveLoginName()"
+                          color="primary"
+                        >
+                          تسجيل اسم الدخول
+                        </button>
+                      </div>
+                      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <button
+                          class="btn-space"
+                          [disabled]="!varAgent.hasLoginName"
+                          mat-raised-button
+                          color="accent"
+                          (click)="onResetPassword()"
+                        >
+                          تغيير كلمة المرور الى 12345
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                @if(showOthers){
-
-                <div>
-                  <h6 class="social-login-title m-5">
-                    اسم الدخول وكلمة المرور للزبون
-                  </h6>
-
-                  <div class="row">
-                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
-                      <mat-form-field
-                        class="example-full-width"
-                        appearance="outline"
-                      >
-                        <mat-label> اسم الدخول </mat-label>
-                        <input
-                          matInput
-                          type="text"
-                          [(ngModel)]="varAgent.loginName"
-                          placeholder="اسم الدخول"
-                          required
-                        />
-                      </mat-form-field>
-                    </div>
-                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
-                      <button
-                        class="btn-space"
-                        [disabled]="varAgent.loginName === undefined"
-                        mat-raised-button
-                        (click)="onSaveLoginName()"
-                        color="primary"
-                      >
-                        تسجيل اسم الدخول
-                      </button>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                      <button
-                        class="btn-space"
-                        [disabled]="!varAgent.hasLoginName"
-                        mat-raised-button
-                        color="accent"
-                        (click)="onResetPassword()"
-                      >
-                        تغيير كلمة المرور الى 12345
-                      </button>
-                    </div>
-                  </div>
-                </div>
                 }
               </div>
             </div>

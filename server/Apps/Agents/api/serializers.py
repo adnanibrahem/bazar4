@@ -96,67 +96,25 @@ class FatoraItemsDetailseSerializer(serializers.ModelSerializer):
 
 
 class FatoraItemsSerializer(serializers.ModelSerializer):
-    rawMaterialTitle = SerializerMethodField()
-
-    def get_rawMaterialTitle(self, obj):
-        if obj.rawMaterial is not None:
-            return obj.rawMaterial.title
-
-    productItemTitle = SerializerMethodField()
-
-    def get_productItemTitle(self, obj):
-        if obj.productItem is not None:
-            return obj.productItem.title
-
     class Meta:
         verbose_name = 'FatoraItems List'
         model = FatoraItems
-        fields = '__all__'
-
-
-class ProfitFatoraItemsSerializer(serializers.ModelSerializer):
-    title = SerializerMethodField()
-    fatoraDate = SerializerMethodField()
-
-    def get_fatoraDate(self, obj):
-        return obj.fatora.fatoraDate
-
-    def get_title(self, obj):
-        if obj.rawMaterial is not None:
-            return obj.rawMaterial.title
-        if obj.productItem is not None:
-            return obj.productItem.title
-
-    class Meta:
-        verbose_name = 'FatoraItems List'
-        model = FatoraItems
-        fields = '__all__'
+        exclude = ['externalURL', 'deleted']
 
 
 class FatoraSerializer(serializers.ModelSerializer):
-    agentTitle = SerializerMethodField()
-    branchTitle = SerializerMethodField()
-    userTitle = SerializerMethodField()
+    agentInfo = SerializerMethodField()
 
-    def get_userTitle(self, obj):
-        if obj.userAuth is not None:
-            return obj.userAuth.first_name
-
-    def get_branchTitle(self, obj):
-        if obj.branch is not None:
-            return obj.branch.title
-
-    def get_agentTitle(self, obj):
-        if obj.agent is not None:
-            return obj.agent.title
+    def get_agentInfo(self, obj):
+        return AgentsSerializer(obj.agent).data if obj.agent is not None else None
 
     items = SerializerMethodField()
 
     def get_items(self, obj):
-        lst = FatoraItems.objects.filter(fatora=obj.pk)
+        lst = FatoraItems.objects.filter(fatora=obj.pk, deleted=False)
         return FatoraItemsSerializer(lst, many=True).data
 
     class Meta:
         verbose_name = 'Fatora List'
         model = Fatora
-        fields = '__all__'
+        exclude = ['deleted']

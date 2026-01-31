@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/prefer-standalone */
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
@@ -8,7 +9,7 @@ import { Observable, Subject } from 'rxjs';
   selector: 'app-webcam-dialog',
   templateUrl: './webcam-dialog.component.html',
   styleUrls: ['./webcam-dialog.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class WebcamDialogComponent implements OnInit, OnDestroy {
   protected ref = inject<MatDialogRef<WebcamDialogComponent>>(MatDialogRef);

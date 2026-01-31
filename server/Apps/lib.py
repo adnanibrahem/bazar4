@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 
-from Apps.Agents.models import CommercialYear, InitAgentsBalance
+from Apps.Agents.models import Agents, CommercialYear, InitAgentsBalance
 from Apps.Box.models import BoxTransaction, InitBranchBox
 from Apps.Users.models import Users
 
@@ -89,6 +89,13 @@ def getAgentBallance(agentId, yearId, details):
         initDenar = qs[0].initDenar
         initDollar = qs[0].initDollar
         id = qs[0].pk
+    else:
+        year = CommercialYear.objects.get(pk=yearId)
+        agnt = Agents.objects.get(pk=agentId)
+        t = InitAgentsBalance(agent=agnt, yearId=year,
+                              initDenar=0, initDollar=0)
+        t.save()
+        id = t.pk
     denar = initDenar
     dollar = initDollar
 

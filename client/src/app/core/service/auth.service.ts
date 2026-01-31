@@ -22,11 +22,23 @@ export class AuthService {
   public currentCommpercialYearSubject: BehaviorSubject<CommercialYear>;
 
   constructor() {
-    this.currentUserSubject = new BehaviorSubject<User>(
-      JSON.parse(
-        this.decrypt(localStorage.getItem('currentUser') || '') || '{}'
-      )
-    );
+    let user = {} as User;
+    try {
+      const storageUser = localStorage.getItem('currentUser');
+      if (storageUser) {
+        const decrypted = this.decrypt(storageUser);
+        if (decrypted) {
+          const parsed = JSON.parse(decrypted);
+          if (parsed && parsed.token) {
+            user = parsed;
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error restoring user from local storage', e);
+    }
+
+    this.currentUserSubject = new BehaviorSubject<User>(user);
     this.currentUser = this.currentUserSubject.asObservable();
 
     this.currentCommpercialYearSubject = new BehaviorSubject<CommercialYear>({

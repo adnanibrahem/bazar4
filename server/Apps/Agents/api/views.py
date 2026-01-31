@@ -1,3 +1,4 @@
+from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 import calendar
 import pytesseract
@@ -20,8 +21,8 @@ from django.views.generic.base import View
 
 from django.db.models.query_utils import Q
 
-from Apps.Agents.api.serializers import AgentsSerializer, BranchSerializer, CommercialYearSerializer
-from Apps.Agents.models import Agents, Branch, CommercialYear, InitAgentsBalance
+from Apps.Agents.api.serializers import AgentsSerializer, BranchSerializer, CommercialYearSerializer, FatoraSerializer
+from Apps.Agents.models import Agents, Branch, CommercialYear, Fatora, FatoraItems, InitAgentsBalance
 from Apps.Users.models import Users
 from Apps.lib import getAgentBallance, getBranch, getPrivilege
 
@@ -121,7 +122,8 @@ class AgentsList(ListAPIView):
 
     def get_queryset(self):
         br = getBranch(self.request.user.id)
-        queryset = Agents.objects.filter(branch=br, deleted=False)
+        queryset = Agents.objects.filter(branch=br,
+                                         group='agent', deleted=False)
         return queryset
 
 
@@ -143,13 +145,17 @@ class AgentsResetPasword(APIView):
 class AgentsActivateLoginName(APIView):
     def post(self, request):
         prv = getPrivilege(request.user.id)
-        if prv == 'accountant':
+        if prv == 'seller':
             data = request.data
+            br = getBranch(request.user.id)
+            ag = Agents.objects.filter(pk=data['id'], branch=br, deleted=False)
+            if ag.count() == 0:
+                return Response({'error': True, 'msg': 'الوكيل غير موجود'},  status=status.HTTP_200_OK)
 
             agentUsers = Users.objects.filter(agent=data['id'])
             if agentUsers.count() == 0:
                 tes = User.objects.filter(username=data['loginName'])
-                if tes.count() > 1:
+                if tes.count() > 0:
                     return Response({'error': True, 'msg': 'اسم المستخدم مكرر'},  status=status.HTTP_200_OK)
 
                 qUser = User(username=data['loginName'],
@@ -158,7 +164,8 @@ class AgentsActivateLoginName(APIView):
                              password=make_password('12345'))
                 qUser.save()
                 agnt = Agents.objects.get(pk=data['id'])
-                guser = Users(auth=qUser, privilege='agent', agent=agnt)
+                guser = Users(auth=qUser, privilege='agent',
+                              branch=br,  agent=agnt)
                 guser.save()
                 return Response({'error': False, 'msg':   'تم الخزن'},  status=status.HTTP_200_OK)
             else:
@@ -174,3 +181,140 @@ class AgentsBalance(APIView):
     def get(self, request, details, id, yearId):
         r = getAgentBallance(id, yearId, details)
         return Response(r,  status=status.HTTP_201_CREATED)
+
+
+class ShowOredrs(APIView):
+    permission_classes = [AllowAny]
+
+    def transform_order_data(self, raw_data):
+        order_data = raw_data.get('order_data', [])
+        products = {}
+        current_item_id = None
+        for entry in order_data:
+            name = entry['name']
+            value = entry['value']
+            if name == "itemsToOrder[]":
+                current_item_id = value
+                if current_item_id not in products:
+                    products[current_item_id] = {}
+                continue
+            if current_item_id and name.startswith(f"{current_item_id}_"):
+                clean_key = name.replace(f"{current_item_id}_", "")
+                products[current_item_id][clean_key] = value
+            elif name in ["new_order_type_shipping", "new_order_description"]:
+                if current_item_id:
+                    products[current_item_id][name] = value
+        return list(products.values())
+
+    def post(self, request):
+        t = self.transform_order_data(request.data)
+
+        if len(t) > 0:
+            uer = User.objects.filter(username=request.data['customer_phone'])
+            if uer.count() == 0:
+                return Response({'message': 'لا يوجد مستخدم'},  status=status.HTTP_200_OK)
+            agent = Users.objects.get(auth=uer[0].pk, deleted=False).agent
+
+            ftr = Fatora(agent=agent,
+                         yearId=CommercialYear.objects.all().order_by('-pk')[0])
+            ftr.save()
+
+            for x in t:
+                ftitem = FatoraItems(fatora=ftr,
+                                     description=x.get(
+                                         'new_order_description', ''),
+                                     InternalDelivery=x.get(
+                                         'id', ''),
+                                     quantity=float(x.get('quantity', 0)),
+                                     unitPrice=float(x.get('price', 0)),
+                                     itemTitle=x.get('itemTitle', ''),
+                                     externalURL=x.get('externalURL', ''),
+                                     pictureURL=x.get('pictureURL', ''),
+                                     weight=float(x.get('weight', 0)),
+                                     shippingType=x.get('new_order_type_shipping', ''))
+
+                ftitem.save()
+
+        return Response({'message': 'تم الخزن بنجاح'},  status=status.HTTP_200_OK)
+        # return Response(t,  status=status.HTTP_200_OK)
+
+
+class SellerFatoraList(ListAPIView):
+    serializer_class = FatoraSerializer
+
+    def get_queryset(self):
+
+        br = getBranch(self.request.user.id)
+        queryset = Fatora.objects.filter(agent__branch=br.pk,
+                                         deleted=False).order_by('-dateAt')
+        return queryset
+
+
+def validUser(request, id):
+    prv = getPrivilege(request.user.id)
+    if prv != 'seller' and prv != 'agent':
+        return False
+
+    if prv == 'seller':
+        br = getBranch(request.user.id)
+        sp = Fatora.objects.filter(pk=id, agent__branch=br.pk)
+        if sp.count() == 0:
+            return False
+
+    if prv == 'agent':
+        usr = Users.objects.filter(auth=request.user.id, deleted=False)
+        if usr.count() == 0:
+            return False
+        agent = usr[0].agent
+        sp = Fatora.objects.filter(pk=id, agent=agent)
+        if sp.count() == 0:
+            return False
+    return True
+
+
+class SellerFatoraSendToBuyer(APIView):
+    def get(self, request, pk):
+        if not validUser(self.request,  pk):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        fr = Fatora.objects.get(pk=pk)
+        fr.status = 2
+        fr.buyingAt = datetime.now((pytz.timezone('Asia/Baghdad')))
+        fr.buyingBy = self.request.user
+        fr.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SellerFatoraRUD(RetrieveUpdateDestroyAPIView):
+    queryset = Fatora.objects.all()
+    serializer_class = FatoraSerializer
+    lookup_fields = ('pk')
+
+    def put(self, request, *args, **kwargs):
+
+        if not validUser(request, kwargs.get('pk')):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        for x in request.data['items']:
+
+            itm = FatoraItems.objects.get(pk=x['id'])
+            itm.quantity = x['quantity']
+            itm.deleted = x['deleted']
+            itm.save()
+
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        if not validUser(request, kwargs.get('pk')):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        sp = Fatora.objects.filter(pk=kwargs.get('pk'))
+        if sp.count() > 0:
+            t = sp[0]
+            t.deleted = True
+            t.save()
+            item = FatoraItems.objects.filter(fatora=t.pk)
+            for x in item:
+                x.delete = True
+                x.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

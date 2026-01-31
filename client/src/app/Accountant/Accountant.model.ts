@@ -131,61 +131,30 @@ export class ProductionItem {
 export class FatoraItems {
   id!: number;
   fatora!: number;
-  rawMaterial!: number;
-  rawMaterialTitle!: string;
-  productItem!: number;
-  productItemTitle!: string;
-  uploadWeight!: number;
-  downloadWeight!: number;
-  cabsa!: number;
-
+  description!: string;
+  InternalDelivery!: string;
   quantity!: number;
-  salePrice!: number;
-  unitCostPrice!: number;
+  unitPrice!: number;
+  itemTitle!: string;
+  externalURL!: string;
+  pictureURL!: string;
+  weight!: number;
+  shippingType!: string;
+  deleted!: boolean;
 }
 
 export class Fatora {
   id!: number;
   agent!: number;
-  fatoraType!: number;
-  agentTitle!: string;
-  discount!: number;
+  agentInfo!: Agent;
+  status!: number;
+  buyingAt!: any;
+  statusTitle!: string;
+
+  yearId!: number;
   totalPrice!: number;
-  paidAmount!: number;
-  fatoraDate!: any;
-  comments!: string;
   items!: FatoraItems[];
-  dateAt!: any;
-  documents!: Documents[];
-}
-
-export class ProductionOperation {
-  id!: number;
-  operationDate!: any;
-  quantity!: number;
-  cabsa!: number;
-  comments!: string;
-  workerName!: string;
-  cabesaNumber!: string;
-  deviceType!: number;
-  items!: ProductionOperationMaterial[];
-  productionItem!: ProductionOperationProduct[];
-}
-
-export class ProductionOperationProduct {
-  productionOperation!: number;
-  id!: number;
-  productionItem!: number;
-  productionItemTitle!: string;
-  quantity!: number;
-}
-
-export class ProductionOperationMaterial {
-  productionOperation!: number;
-  id!: number;
-  rawMaterial!: number;
-  rawMaterialTitle!: string;
-  quantity!: number;
+  showSpinner!: boolean;
 }
 
 export class BoxBalance {
@@ -198,16 +167,5 @@ export class Category {
   branch!: number;
   title!: string;
   inProfit!: boolean;
-  deleted!: boolean;
-}
-
-export class FixedAssets {
-  id!: number;
-  branch!: number;
-  title!: string;
-  location!: string;
-  owner!: string;
-  quantity!: number;
-  price!: number;
   deleted!: boolean;
 }

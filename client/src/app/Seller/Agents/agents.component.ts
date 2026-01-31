@@ -44,8 +44,8 @@ export class AgentsComponent
     'title',
     'address',
     'phoneNumber',
-    'initBalance',
-    'denar',
+    'initDollar',
+    'dollar',
     'actions',
   ];
   totalDenar = 0;
@@ -88,9 +88,10 @@ export class AgentsComponent
         k.initId = w.initId;
 
         k.initDollar = w.initDollar;
+        k.initDenar = w.initDenar;
 
         k.curDenar = w.denar;
-        k.initDenar = w.initDenar;
+        k.curDollar = w.dollar;
 
         k.yearId = this.cmYear.id;
         this.totalDenar += w.denar;
