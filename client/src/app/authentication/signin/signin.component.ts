@@ -30,7 +30,8 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class SigninComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit {
+  implements OnInit
+{
   private formBuilder = inject(UntypedFormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -76,7 +77,7 @@ export class SigninComponent
                 lUser.role = Role.Admin;
               } else if (s.includes('4')) {
                 lUser.role = Role.Agent;
-                tUrl = '/acc/agents';
+                tUrl = '/agent/myorders';
               } else if (s.includes('9')) {
                 lUser.role = Role.Seller;
                 tUrl = '/seller/fwater';
@@ -94,7 +95,7 @@ export class SigninComponent
             this.error = error;
             this.submitted = false;
             this.loading = false;
-          }
+          },
         );
     }
   }

@@ -19,14 +19,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { SellerRoutingModule } from './agent-routing.module';
+import { AgentRoutingModule } from './agent-routing.module';
 import { MyOrdersComponent } from './MyOrders/my-orders.component';
 
 @NgModule({
   declarations: [MyOrdersComponent],
   imports: [
     CommonModule,
-    SellerRoutingModule,
+    AgentRoutingModule,
     ComponentsModule,
     SharedModule,
     FormsModule,

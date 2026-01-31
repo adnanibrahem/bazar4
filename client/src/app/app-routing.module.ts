@@ -30,7 +30,7 @@ const routes: Routes = [
         },
         loadChildren: () =>
           import('./Accountant/Accountant.module').then(
-            (m) => m.AccountantModule
+            (m) => m.AccountantModule,
           ),
       },
 
@@ -41,7 +41,17 @@ const routes: Routes = [
           role: [Role.Seller],
         },
         loadChildren: () =>
-          import('./Seller/Seller.module').then((m) => m.SellerModule),
+          import('./seller/Seller.module').then((m) => m.SellerModule),
+      },
+
+      {
+        path: 'agents',
+        canActivate: [AuthGuard],
+        data: {
+          role: [Role.Seller],
+        },
+        loadChildren: () =>
+          import('./agent/agent.module').then((m) => m.AgentModule),
       },
     ],
   },
@@ -51,7 +61,7 @@ const routes: Routes = [
     component: AuthLayoutComponent,
     loadChildren: () =>
       import('./authentication/authentication.module').then(
-        (m) => m.AuthenticationModule
+        (m) => m.AuthenticationModule,
       ),
   },
 
@@ -62,5 +72,5 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-  constructor() { }
+  constructor() {}
 }

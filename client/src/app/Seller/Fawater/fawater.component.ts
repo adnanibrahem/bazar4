@@ -57,7 +57,6 @@ export class FawaterComponent
       if (!w.deleted) k.totalPrice += w.quantity * w.unitPrice;
       if (w.status === 1) k.showSendButton = true;
     });
-
   }
   LoadFawater() {
     this.showSpinner = true;

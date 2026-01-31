@@ -137,4 +137,20 @@ export const SideMenuRouts: RouteInfo[] = [
     submenu: [],
     selected: false,
   },
+
+  //  Agent Modules
+  {
+    path: '/agent/myorders/',
+    title: 'طلباتي',
+    iconType: 'bootstrap',
+    icon: 'bi bi-send-check sidebarIcon sidebarIconColor',
+    class: '',
+    index: 0,
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['agent'],
+    submenu: [],
+    selected: false,
+  },
 ];
