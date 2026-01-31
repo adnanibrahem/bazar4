@@ -46,4 +46,4 @@ import { MyOrdersComponent } from './MyOrders/my-orders.component';
     MatTooltipModule,
   ],
 })
-export class AgentModule {}
+export class AgentModule { }

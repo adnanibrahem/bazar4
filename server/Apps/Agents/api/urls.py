@@ -27,4 +27,6 @@ urlpatterns = [
     path('seller/fatora/edit/<int:pk>/', views.SellerFatoraRUD.as_view()),
     path('seller/fatora/send/<int:pk>/', views.SellerFatoraSendToBuyer.as_view()),
 
-]
+    path('agent/fatora/list/', views.AgentFatoraOrderingList.as_view()),
+    path('agent/fatora/edit/<int:pk>/', views.AgentFatoraRUD.as_view()),
+ ]

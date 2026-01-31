@@ -243,6 +243,9 @@ class ShowOredrs(APIView):
 class SellerFatoraOrderingList(ListAPIView):
     serializer_class = FatoraSerializer
     def get_queryset(self):
+        prv=getPrivilege(self.request.user.id)
+        if prv !='seller':
+            return []
         br = getBranch(self.request.user.id)
         fatoraId= FatoraItems.objects.filter(fatora__agent__branch=br.pk,
                                             status=1,fatora__deleted=False,
@@ -263,6 +266,9 @@ class SellerFatoraSentList(ListAPIView):
     search_fields = ['agent__title', 'id']
 
     def get_queryset(self):
+        prv=getPrivilege(self.request.user.id)
+        if prv !='seller':
+            return []
         br = getBranch(self.request.user.id)
         fatoraId= FatoraItems.objects.filter(fatora__agent__branch=br.pk,
                                             status__gt=1,fatora__deleted=False,
@@ -296,6 +302,9 @@ def validUser(request, id):
 
 class SellerFatoraSendToBuyer(APIView):
     def get(self, request, pk):
+        prv=getPrivilege(self.request.user.id)
+        if prv !='seller':
+            return Response(status=status.HTTP_403_FORBIDDEN)
         if not validUser(self.request,  pk):
             return Response(status=status.HTTP_403_FORBIDDEN)
         fr = Fatora.objects.get(pk=pk)
@@ -321,7 +330,49 @@ class SellerFatoraRUD(RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         for x in request.data['items']:
+            itm = FatoraItems.objects.get(pk=x['id'])
+            itm.quantity = x['quantity']
+            itm.deleted = x['deleted']
+            itm.save()
 
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        if not validUser(request, kwargs.get('pk')):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        sp = Fatora.objects.filter(pk=kwargs.get('pk'))
+        if sp.count() > 0:
+            t = sp[0]
+            t.deleted = True
+            t.save()
+            item = FatoraItems.objects.filter(fatora=t.pk)
+            for x in item:
+                x.delete = True
+                x.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AgentFatoraOrderingList(ListAPIView):
+    serializer_class = FatoraSerializer
+    def get_queryset(self):
+        usr = Users.objects.filter(auth=self.request.user.id, deleted=False)
+        if usr.count() == 0:
+            return []
+        agent = usr[0].agent
+        queryset = Fatora.objects.filter(agent=agent,
+                                         deleted=False).order_by('-dateAt')
+        return queryset
+ 
+class AgentFatoraRUD(RetrieveUpdateDestroyAPIView):
+    queryset = Fatora.objects.all()
+    serializer_class = FatoraSerializer
+    lookup_fields = ('pk')
+
+    def put(self, request, *args, **kwargs):
+
+        if not validUser(request, kwargs.get('pk')):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        for x in request.data['items']:
             itm = FatoraItems.objects.get(pk=x['id'])
             itm.quantity = x['quantity']
             itm.deleted = x['deleted']

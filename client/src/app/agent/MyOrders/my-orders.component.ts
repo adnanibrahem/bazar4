@@ -19,8 +19,7 @@ import { FatoraStuts } from '@core/models/role';
 })
 export class MyOrdersComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   private http = inject(MyHTTP);
   private dialog = inject(MatDialog);
   private datePipe = inject(DatePipe);
@@ -46,7 +45,7 @@ export class MyOrdersComponent
   title = 'فواتير المبيعات';
   //
   appApi = 'agents';
-  appApiURL = 'seller/fatora/';
+  appApiURL = 'agent/fatora/';
   ngOnInit(): void {
     this.LoadFawater();
   }
@@ -61,7 +60,7 @@ export class MyOrdersComponent
   }
   LoadFawater() {
     this.showSpinner = true;
-    this.http.list(this.appApi, this.appApiURL + 'ordering/list').subscribe(
+    this.http.list(this.appApi, this.appApiURL + 'list').subscribe(
       (e: any) => {
         this.dataSource = new MatTableDataSource(e);
         this.dataSource.data.forEach((k) => {

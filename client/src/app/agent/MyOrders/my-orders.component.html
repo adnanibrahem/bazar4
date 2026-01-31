@@ -98,21 +98,14 @@
                           class="btn btn-outline-primary rounded-circle btn-icon m-1" matTooltip="تفاصيل الفاتورة">
                           <i class="bi bi-card-checklist fs-7"></i>
                         </button>
-
                         @if (row.showSendButton) {
-                        <button (click)="$event.stopPropagation()" (click)="SendToChina(row)"
-                          class="btn btn-outline-warning rounded-circle btn-icon" matTooltip="ارسال الطلب الى الصين">
-                          @if (row.showSpinner) {
-                          <div class="spinner-border spinner-border-sm" role="status"></div>
-                          } @else {
-                          <i class="bi bi-send fs-7"></i>
-                          }
-                        </button>
+
                         <button (click)="$event.stopPropagation()" (click)="deleteFatora(i, row)"
                           class="btn btn-outline-danger rounded-circle btn-icon m-1" matTooltip="حذف الطلب">
                           <i class="bi bi-trash fs-7"></i>
                         </button>
                         }
+
                       </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

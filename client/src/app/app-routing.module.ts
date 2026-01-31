@@ -45,10 +45,10 @@ const routes: Routes = [
       },
 
       {
-        path: 'agents',
+        path: 'agent',
         canActivate: [AuthGuard],
         data: {
-          role: [Role.Seller],
+          role: [Role.Agent],
         },
         loadChildren: () =>
           import('./agent/agent.module').then((m) => m.AgentModule),
@@ -72,5 +72,5 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-  constructor() {}
+  constructor() { }
 }

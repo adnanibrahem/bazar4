@@ -30,8 +30,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class SigninComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -87,6 +86,7 @@ export class SigninComponent
               } else this.router.navigate(['/authentication/signin']);
 
               lUser.token = res.token;
+
               this.authService.setCurrentUserValue(lUser);
               this.router.navigate([tUrl]);
             });

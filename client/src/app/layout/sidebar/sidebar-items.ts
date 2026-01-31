@@ -141,9 +141,9 @@ export const SideMenuRouts: RouteInfo[] = [
   //  Agent Modules
   {
     path: '/agent/myorders/',
-    title: 'طلباتي',
+    title: 'فواتير المبيعات',
     iconType: 'bootstrap',
-    icon: 'bi bi-send-check sidebarIcon sidebarIconColor',
+    icon: 'bi bi-cart4 sidebarIcon sidebarIconColor',
     class: '',
     index: 0,
     groupTitle: false,
