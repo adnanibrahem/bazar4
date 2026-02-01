@@ -30,10 +30,11 @@ class Agents(models.Model):
 
 class InitAgentsBalance(models.Model):
     agent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING)
-    initDenar = models.FloatField(default=0, )
-    initDollar = models.FloatField(default=0, )
+    initDenar = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    initDollar = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    initYuan = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     yearId = models.ForeignKey(CommercialYear, on_delete=models.DO_NOTHING)
-
+   
 
 class Fatora(models.Model):
     agent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING)

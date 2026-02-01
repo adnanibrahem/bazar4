@@ -17,8 +17,9 @@ def get_upload_path(instance, filename):
 
 
 class InitBranchBox(models.Model):
-    denar = models.FloatField(default=0)
-    dollae = models.FloatField(default=0)
+    denar = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    dollar = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    yuan = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     yearId = models.ForeignKey(CommercialYear, on_delete=models.DO_NOTHING)
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
 
@@ -31,17 +32,17 @@ class Category(models.Model):
 
 
 class BoxTransaction(models.Model):
-    fromAmount = models.FloatField(default=0, help_text='المبلغ ')
+    fromAmount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     fromBox = models.BooleanField(default=False)
     fromAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                   related_name='ffrrooAgent', null=True, blank=True)
-    fromCurrency = models.BooleanField(default=True)
+    fromCurrency = models.IntegerField(default=1) # 1 = denar, 2 = dollar, 3 = yuan
 
-    toAmount = models.FloatField(default=0)
+    toAmount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     toBox = models.BooleanField(default=False)
     toAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                 related_name='ttooAgent', null=True, blank=True)
-    toCurrency = models.BooleanField(default=True)
+    toCurrency = models.IntegerField(default=1) # 1 = denar, 2 = dollar, 3 = yuan
 
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,
                                  null=True, blank=True)

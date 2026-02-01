@@ -1,5 +1,6 @@
 import { AuthService } from "../service/auth.service";
 import { Injectable, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import {
   HttpRequest,
   HttpHandler,
@@ -12,6 +13,7 @@ import { catchError } from "rxjs/operators";
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private authenticationService = inject(AuthService);
+  private router = inject(Router);
 
 
   intercept(
@@ -19,11 +21,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
-      catchError((err) => {
+      catchError((err: any) => {
         if (err.status === 401) {
           // auto logout if 401 response returned from api
-          // this.authenticationService.logout();
-          // location.reload();
+          if (err.error.detail === "Signature has expired.") {
+            this.authenticationService.logout();
+            this.router.navigate(['/authentication/signin']);
+          }
         }
 
         const error = err.error.message || err.statusText;

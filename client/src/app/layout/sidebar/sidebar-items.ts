@@ -34,23 +34,8 @@ export const SideMenuRouts: RouteInfo[] = [
   //*********************************** */
 
   {
-    path: '/acc/sale/',
-    title: ' المبيعات',
-    iconType: 'bootstrap',
-    icon: 'bi bi-cart4 sidebarIcon sidebarIconColor',
-    class: '',
-    index: 8,
-    groupTitle: false,
-    badge: '',
-    badgeClass: '',
-    role: ['accountant'],
-    submenu: [],
-    selected: false,
-  },
-
-  {
     path: '/acc/box/',
-    title: 'ادارة الحسابات',
+    title: 'الحسابات',
     iconType: 'bootstrap',
     icon: 'bi bi-box-seam sidebarIcon sidebarIconColor',
     class: '',

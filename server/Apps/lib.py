@@ -4,10 +4,14 @@ from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 
-from Apps.Agents.models import Agents, CommercialYear, InitAgentsBalance
+from Apps.Agents.models import Agents, CommercialYear, InitAgentsBalance, Branch,FatoraItems
 from Apps.Box.models import BoxTransaction, InitBranchBox
 from Apps.Users.models import Users
+from Apps.Box.api.serializers import BoxTransactionSerializer
+from Apps.Agents.api.serializers import FatoraItemsSerializer
 
+
+from decimal import Decimal
 
 class HasFullPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -81,93 +85,98 @@ def getPrivilege(id):
 def getAgentBallance(agentId, yearId, details):
     initDenar = 0
     initDollar = 0
+    initYuan = 0
     denar = 0
     dollar = 0
+    yuan = 0
     id = 0
     qs = InitAgentsBalance.objects.filter(agent=agentId, yearId=yearId)
     if qs.count() > 0:
         initDenar = qs[0].initDenar
         initDollar = qs[0].initDollar
+        initYuan = qs[0].initYuan
         id = qs[0].pk
     else:
         year = CommercialYear.objects.get(pk=yearId)
         agnt = Agents.objects.get(pk=agentId)
         t = InitAgentsBalance(agent=agnt, yearId=year,
-                              initDenar=0, initDollar=0)
+                              initDenar=0, initDollar=0, initYuan=0)
         t.save()
         id = t.pk
     denar = initDenar
     dollar = initDollar
+    yuan = initYuan
 
-    # fatoraList = Fatora.objects.filter(agent=agentId,
-    #                                    yearId=yearId,
-    #                                    fatoraType=1,
-    #                                    deleted=False)
-    # for x in fatoraList:
-    #     denar -= (x.totalPrice)
+    fatoraList = FatoraItems.objects.filter(fatora__agent=agentId,
+                                       fatora__yearId=yearId,
+                                       fatora__deleted=False,
+                                       deleted=False).order_by('-fatora__pk')
+    for x in fatoraList:
+        dollar += Decimal(x.quantity * x.unitPrice)
 
-    # fatoraList2 = Fatora.objects.filter(agent=agentId,
-    #                                     yearId=yearId,
-    #                                     fatoraType=2,
-    #                                     deleted=False)
-    # for x in fatoraList2:
-    #     denar += (x.totalPrice)
 
     bx = BoxTransaction.objects.filter(toAgent=agentId,
                                        yearId=yearId,
-                                       deleted=False)
+                                       deleted=False).order_by('-pk')
     for x in bx:
-        if x.fatora is not None:
-            if x.fatora.fatoraType == 1:
-                denar += x.toAmount
-            else:
-                denar -= x.toAmount
-        else:
+        if x.toCurrency == 1:
             denar += x.toAmount
+        elif x.toCurrency == 2:
+            dollar += x.toAmount
+        elif x.toCurrency == 3:
+            yuan += x.toAmount
 
     bxFrom = BoxTransaction.objects.filter(fromAgent=agentId,
                                            yearId=yearId,
-                                           deleted=False)
+                                           deleted=False).order_by('-pk')
     for x in bxFrom:
-        denar -= x.fromAmount
+        if x.fromCurrency == 1:
+            denar -= x.fromAmount
+        elif x.fromCurrency == 2:
+            dollar -= x.fromAmount
+        elif x.fromCurrency == 3:
+            yuan -= x.fromAmount
 
     detailsItems = []
-    # if details == 1:
-    #     for x in fatoraList:
-    #         detailsItems.append({'date': x.fatoraDate,
-    #                              'type': 'fatora',
-    #                              'd': FatoraSerializer(x).data})
+    if details == 1:
+        for x in fatoraList:
+            detailsItems.append({'date': x.fatoraDate,
+                                 'type': 'fatora',
+                                 'd': FatoraItemsSerializer(x).data})
 
-    #     for x in fatoraList2:
-    #         detailsItems.append({'date': x.fatoraDate,
-    #                              'type': 'fatora',
-    #                              'd': FatoraSerializer(x).data})
-
-    #     for x in bx:
-    #         detailsItems.append({'date': x.transactionDate,
-    #                              'type': 'boxTransaction',
-    #                              'd': BoxTransactionSerializer(x).data})
-    #     for x in bxFrom:
-    #         detailsItems.append({'date': x.transactionDate,
-    #                              'type': 'boxTransaction',
-    #                              'd': BoxTransactionSerializer(x).data})
+        for x in bx:
+            detailsItems.append({'date': x.transactionDate,
+                                 'type': 'boxTransaction',
+                                 'd': BoxTransactionSerializer(x).data})
+        for x in bxFrom:
+            detailsItems.append({'date': x.transactionDate,
+                                 'type': 'boxTransaction',
+                                 'd': BoxTransactionSerializer(x).data})
 
     return {'initId': id,
             'initDenar': initDenar,
             'denar': denar,
             'initDollar': initDollar,
             'dollar': dollar,
+            'initYuan': initYuan,
+            'yuan': yuan,
             'details': detailsItems}
-
+  
 
 def getBoxBallance(branchId, yearId, details):
     denar = 0
+    dollar = 0
+    yuan = 0
     initDenar = 0
+    initDollar = 0
+    initYuan = 0
     initId = 0
     gData = []
     initQs = InitBranchBox.objects.filter(yearId=yearId, branch=branchId)
     if initQs.count() > 0:
         initDenar = initQs[0].denar
+        initDollar = initQs[0].dollar
+        initYuan = initQs[0].yuan
         initId = initQs[0].pk
     else:
         year = CommercialYear.objects.get(pk=yearId)
@@ -176,36 +185,41 @@ def getBoxBallance(branchId, yearId, details):
         t.save()
         initId = t.pk
     denar = initDenar
-
+    dollar = initDollar
+    yuan = initYuan
     fromBox = BoxTransaction.objects.filter(yearId=yearId, branch=branchId,
-                                            subAccountant=False,
                                             deleted=False, fromBox=True)
 
     toBox = BoxTransaction.objects.filter(yearId=yearId, branch=branchId,
-                                          subAccountant=False,
                                           deleted=False, toBox=True)
     for x in fromBox:
-        if x.fatora is not None:
-            if x.fatora.fatoraType == 1:
-                denar -= x.fromAmount
-        else:
+        if x.fromCurrency == 1:
             denar -= x.fromAmount
+        elif x.fromCurrency == 2:
+            dollar -= x.fromDollar
+        elif x.fromCurrency == 3:
+            yuan -= x.fromYuan
 
     for x in toBox:
-        if x.fatora is not None:
-            if x.fatora.fatoraType == 2:
-                denar += x.toAmount
-        else:
+        if x.toCurrency == 1:
             denar += x.toAmount
+        elif x.toCurrency == 2:
+            dollar += x.toDollar
+        elif x.toCurrency == 3:
+            yuan += x.toYuan
 
-    # if details == 1:
-    #     gData = BoxTransactionSerializer(fromBox,
-    #                                      many=True).data + BoxTransactionSerializer(toBox,
-    #                                                                                 many=True).data
+    if details == 1:
+        gData = BoxTransactionSerializer(fromBox,
+                                         many=True).data + BoxTransactionSerializer(toBox,
+                                                                                    many=True).data
     return {
         'initId': initId,
         'initDenar': initDenar,
         'denar': denar,
+        'initDollar': initDollar,
+        'dollar': dollar,
+        'initYuan': initYuan,
+        'yuan': yuan,
         'details': gData}
 
 

@@ -82,7 +82,7 @@ export class SigninComponent
                 tUrl = '/seller/fwater';
               } else if (s.includes('2')) {
                 lUser.role = Role.Accountant;
-                tUrl = '/acc/purchas';
+                tUrl = '/acc/box';
               } else this.router.navigate(['/authentication/signin']);
 
               lUser.token = res.token;

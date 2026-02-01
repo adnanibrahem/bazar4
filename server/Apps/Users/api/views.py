@@ -183,7 +183,7 @@ class UsersListAll(ListAPIView):
 
     def get_queryset(self):
         if self. request.user.is_active:
-            queryset = Users.objects.all()
+            queryset = Users.objects.filter(deleted=False).exclude(privilege='agent')
             return queryset
         return None
 
