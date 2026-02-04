@@ -44,11 +44,9 @@ export class BoxTransaction {
   fromAmount!: any;
   toAmount!: any;
 
-  toSubAcc!: number;
-  fromSubAcc!: number;
+  fromCurrency!: number;
+  toCurrency!: number;
 
-  toSubAccTitle!: string;
-  fromSubAccTitle!: string;
 
   fromAgent!: number;
 
@@ -68,6 +66,16 @@ export class BoxTransaction {
   showSpinner!: boolean;
   subAccountant!: boolean;
   documents!: Documents[];
+
+  fromCentral!: boolean;
+  fromOther!: boolean;
+
+  toCentral!: boolean;
+  toOther!: boolean;
+  toBuyer!: boolean;
+
+  buyerOwn!: boolean;
+  centralOwn!: boolean;
 }
 
 export class Documents {

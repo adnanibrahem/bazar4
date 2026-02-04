@@ -18,10 +18,10 @@ class Branch(models.Model):
 
 class Agents(models.Model):
     title = models.CharField(max_length=100)
-    group = models.CharField(max_length=50, default="agent")
+    group = models.CharField(max_length=50, default="agent") # agent , employee  , remittance
     address = models.TextField(null=True, blank=True)
     phoneNumber = models.CharField(max_length=20, null=True, blank=True)
-    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
+    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING, null=True, blank=True)
     userAuth = models.ForeignKey(USER_MODEL,
                                  related_name='userAdded',
                                  on_delete=models.DO_NOTHING)

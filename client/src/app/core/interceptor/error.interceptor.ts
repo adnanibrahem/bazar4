@@ -24,10 +24,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((err: any) => {
         if (err.status === 401) {
           // auto logout if 401 response returned from api
-          if (err.error.detail === "Signature has expired.") {
-            this.authenticationService.logout();
-            this.router.navigate(['/authentication/signin']);
-          }
+          this.authenticationService.logout();
+          this.router.navigate(['/authentication/signin']);
         }
 
         const error = err.error.message || err.statusText;

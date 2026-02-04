@@ -32,8 +32,7 @@ import { CommercialYear } from 'app/admin/admin.model';
 })
 export class BoxTransactionComponent
   extends UnsubscribeOnDestroyAdapter
-  implements OnInit
-{
+  implements OnInit {
   private http = inject(MyHTTP);
   private fb = inject(UntypedFormBuilder);
   private dialog = inject(MatDialog);
@@ -114,12 +113,10 @@ export class BoxTransactionComponent
     if (t.toBox) {
       txt = '  ';
       if (t.fromAgent) txt += '' + t.fromAgentTitle;
-      else if (t.fromSubAcc) txt += t.fromSubAccTitle;
     }
     if (t.fromBox) {
       txt = '  ';
       if (t.toAgent) txt += '    ' + t.toAgentTitle;
-      else if (t.toSubAcc) txt += t.toSubAccTitle;
       else if (t.category) txt += t.categoryTitle;
     }
     return txt;
@@ -234,11 +231,9 @@ export class BoxTransactionComponent
   getFromToTitle(k: BoxTransaction) {
     if (k.fromAgent) k.fromText = k.fromAgentTitle;
     else if (k.fromBox) k.fromText = ' الصندوق';
-    else if (k.fromSubAcc) k.fromText = k.fromSubAccTitle;
 
     if (k.toAgent) k.toText = k.toAgentTitle;
     else if (k.toBox) k.toText = ' الصندوق';
-    else if (k.toSubAcc) k.toText = k.toSubAccTitle;
     else if (k.category) k.toText = k.categoryTitle;
   }
 
@@ -296,6 +291,8 @@ export class BoxTransactionComponent
       this.varBTrx = {} as BoxTransaction;
       this.fromSelect = 'fromBox';
       this.toSelect = 'toBox';
+      this.varBTrx.fromCurrency = 1;
+      this.varBTrx.toCurrency = 1;
       this.raidChangeTo('toBox');
       this.raidChangeFrom('fromBox');
       this.varBTrx.transactionDate = new Date();
@@ -316,13 +313,11 @@ export class BoxTransactionComponent
     this.selectedIndex = 1;
     if (ed.fromAgent) this.fromSelect = 'fromAgent';
     else if (ed.fromBox) this.fromSelect = 'fromBox';
-    else if (ed.fromSubAcc) this.fromSelect = 'fromSubAcc';
 
     this.raidChangeFrom(this.fromSelect);
 
     if (ed.toAgent) this.toSelect = 'toAgent';
     else if (ed.toBox) this.toSelect = 'toBox';
-    else if (ed.toSubAcc) this.toSelect = 'toubAcc';
     else if (ed.category) this.toSelect = 'category';
 
     this.raidChangeTo(this.toSelect);
@@ -440,14 +435,7 @@ export class BoxTransactionComponent
   }
   toAgentEvent: Subject<boolean> = new Subject<boolean>();
   fromAgentEvent: Subject<boolean> = new Subject<boolean>();
-  fromSubAccEvent: Subject<boolean> = new Subject<boolean>();
 
-  fromBankEvent: Subject<boolean> = new Subject<boolean>();
-  toBankEvent: Subject<boolean> = new Subject<boolean>();
-  toFactoryEvent: Subject<boolean> = new Subject<boolean>();
-  toSubAccEvent: Subject<boolean> = new Subject<boolean>();
-
-  fromFactoryEvent: Subject<boolean> = new Subject<boolean>();
   categoryEvent: Subject<boolean> = new Subject<boolean>();
 
   raidChangeTo(ev: string) {
@@ -586,67 +574,7 @@ export class BoxTransactionComponent
   }
   //  ------------End pictures
 
-  storDenar = 0;
-  storDollar = 0;
-  storspinner = true;
 
-  agentDenar = 0;
-  agentDollar = 0;
-  agentpinner = true;
 
-  customerDenar = 0;
-  customerDollar = 0;
-  customerpinner = true;
 
-  otherAccDenar = 0;
-  otherAccDollar = 0;
-  otherAccpinner = true;
-
-  mBranchDenar = 0;
-  mBranchDollar = 0;
-  mBranchpinner = true;
-
-  totalDenar = 0;
-  totalDollar = 0;
-  updateTotal() {
-    this.totalDenar =
-      this.mBranchDenar +
-      this.otherAccDenar +
-      this.customerDenar +
-      this.storDenar +
-      this.agentDenar;
-    this.totalDollar =
-      this.mBranchDollar +
-      this.otherAccDollar +
-      this.customerDollar +
-      this.storDollar +
-      this.agentDollar;
-  }
-
-  dtFrom = '';
-  dtTo = '';
-
-  theProfits: any;
-  denarProfits = 0;
-  dollarProfits = 0;
-  profitSpinner = false;
-
-  calculateProfit() {
-    this.profitSpinner = true;
-    this.http
-      .post('agents', 'profit', {
-        dtFrom: this.datePipe.transform(this.dtFrom, 'yyyy-MM-dd'),
-        dtTo: this.datePipe.transform(this.dtTo, 'yyyy-MM-dd'),
-      })
-      .subscribe((e: any) => {
-        this.theProfits = e;
-        e.fatoraItemsList.sort((a: any, b: any) =>
-          a.materialTitle < b.materialTitle ? -1 : 1
-        );
-
-        this.denarProfits = e.salesDenar - (e.expencessDenar + e.costDenar);
-        this.dollarProfits = 0 - e.expencessDollar;
-        this.profitSpinner = false;
-      });
-  }
 }

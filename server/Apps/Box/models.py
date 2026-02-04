@@ -37,18 +37,32 @@ class BoxTransaction(models.Model):
     fromAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                   related_name='ffrrooAgent', null=True, blank=True)
     fromCurrency = models.IntegerField(default=1) # 1 = denar, 2 = dollar, 3 = yuan
+    fromCentral = models.BooleanField(default=False)
+    fromBranch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING,
+                                   related_name='ffrrooBranch', null=True, blank=True)
+    fromOther = models.BooleanField(default=False)
+    
 
     toAmount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     toBox = models.BooleanField(default=False)
     toAgent = models.ForeignKey(Agents, on_delete=models.DO_NOTHING,
                                 related_name='ttooAgent', null=True, blank=True)
     toCurrency = models.IntegerField(default=1) # 1 = denar, 2 = dollar, 3 = yuan
+    toCentral = models.BooleanField(default=False)
+    toBranch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING,
+                                   related_name='ttooBranch', null=True, blank=True)
+    toOther = models.BooleanField(default=False)
+    toBuyer = models.BooleanField(default=False)
 
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,
                                  null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     transactionDate = models.DateField()
-    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
+
+    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING, null=True, blank=True)
+    buyerOwn = models.BooleanField(default=False)
+    centralOwn = models.BooleanField(default=False)
+
     dateAt = models.DateTimeField(auto_now_add=True)
     userAuth = models.ForeignKey(USER_MODEL, on_delete=models.DO_NOTHING)
     deleted = models.BooleanField(default=False)
