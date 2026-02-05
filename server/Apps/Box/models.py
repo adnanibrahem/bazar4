@@ -41,7 +41,6 @@ class BoxTransaction(models.Model):
     fromBranch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING,
                                    related_name='ffrrooBranch', null=True, blank=True)
     fromOther = models.BooleanField(default=False)
-    
 
     toAmount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     toBox = models.BooleanField(default=False)

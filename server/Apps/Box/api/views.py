@@ -16,7 +16,7 @@ from django.views.generic.base import View
 from django.db.models.query_utils import Q
 
 from Apps.Box.api.serializers import BoxTransactionSerializer, CategorySerializer
-from Apps.Box.models import BoxTransaction, Category, InitBranchBox
+from Apps.Box.models import BoxTransaction, Category, InitBranchBox, CommercialYear
 
 from Apps.lib import getBoxBallance, getBranch, getPrivilege
 # from Apps.lib import  getBoxBallance, getBranch, getPrivilege
@@ -111,7 +111,6 @@ class BoxTransactionCreate(CreateAPIView):
         request.data['branch'] = br.pk
         request.data['userAuth'] = self.request.user.id
         request.data['yearId'] = cm[0].pk
-
         return super().post(request, *args, **kwargs)
 
 

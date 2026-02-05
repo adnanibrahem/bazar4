@@ -7,7 +7,7 @@ USER_MODEL = get_user_model()
 
 class CommercialYear(models.Model):
     title = models.CharField(max_length=15)
-
+ 
 
 class Branch(models.Model):
     title = models.CharField(max_length=60)

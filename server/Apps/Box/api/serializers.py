@@ -28,21 +28,12 @@ class DocumentsSerializer(serializers.ModelSerializer):
 class BoxTransactionSerializer(serializers.ModelSerializer):
     fromAgentTitle = SerializerMethodField()
     toAgentTitle = SerializerMethodField()
-    fromSubAccTitle = SerializerMethodField()
-    toSubAccTitle = SerializerMethodField()
     userTitle = SerializerMethodField()
 
     def get_userTitle(self, obj):
         if obj.userAuth is not None:
             return obj.userAuth.first_name
-
-    def get_fromSubAccTitle(self, obj):
-        if obj.fromSubAcc is not None:
-            return obj.fromSubAcc.first_name
-
-    def get_toSubAccTitle(self, obj):
-        if obj.toSubAcc is not None:
-            return obj.toSubAcc.first_name
+ 
 
     categoryTitle = SerializerMethodField()
     documents = SerializerMethodField()

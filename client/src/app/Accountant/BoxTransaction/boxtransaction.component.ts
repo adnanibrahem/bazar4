@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -39,7 +39,7 @@ export class BoxTransactionComponent
   protected sanitizer = inject(DomSanitizer);
   private auth = inject(AuthService);
   private datePipe = inject(DatePipe);
-
+  private cdr = inject(ChangeDetectorRef);
   dataSource: MatTableDataSource<BoxTransaction> = new MatTableDataSource();
   @ViewChild('paginator') pagi!: MatPaginator;
   @ViewChild('pagBoxDetails') pagBoxDetails!: MatPaginator;
@@ -58,6 +58,7 @@ export class BoxTransactionComponent
     'fromText',
     'toText',
     'fromAmount',
+    'toAmount',
     'transactionDate',
     'comments',
     'userTitle',
@@ -167,7 +168,6 @@ export class BoxTransactionComponent
         this.dsBoxDet.data = this.boxDetals;
         this.dsBoxDet.paginator = this.pagBoxDetails;
         this.dsBoxDet._updateChangeSubscription();
-
         this.selectedIndex = 2;
         this.showSpinner = false;
       },
@@ -229,9 +229,13 @@ export class BoxTransactionComponent
   }
 
   getFromToTitle(k: BoxTransaction) {
+    k.fromAmount = Number(k.fromAmount);
+    k.toAmount = Number(k.toAmount);
+    console.log(k);
+    k.fromText = '';
+    k.toText = '';
     if (k.fromAgent) k.fromText = k.fromAgentTitle;
     else if (k.fromBox) k.fromText = ' الصندوق';
-
     if (k.toAgent) k.toText = k.toAgentTitle;
     else if (k.toBox) k.toText = ' الصندوق';
     else if (k.category) k.toText = k.categoryTitle;
@@ -306,8 +310,15 @@ export class BoxTransactionComponent
   }
 
   editCall(ed: BoxTransaction) {
+    this.showFromBalance = false;
+    this.showToBalance = false;
+    this.fromDenar = 0;
+    this.fromDollar = 0;
+    this.toDenar = 0;
+    this.toDollar = 0;
     this.varBTrx = ed;
-    this.varBTrx.fromAmountComma = ed.toAmount;
+    this.varBTrx.fromAmountComma = ed.fromAmount;
+    this.varBTrx.toAmountComma = ed.toAmount;
     this.caption = ' تعديل بيانات حركة حسابات ';
 
     this.selectedIndex = 1;
@@ -321,6 +332,9 @@ export class BoxTransactionComponent
     else if (ed.category) this.toSelect = 'category';
 
     this.raidChangeTo(this.toSelect);
+
+    this.cdr.detectChanges();
+
   }
 
   isValid(): boolean {
@@ -363,8 +377,6 @@ export class BoxTransactionComponent
       dt.transactionDate,
       'yyyy-MM-dd'
     );
-    // if (dt.toAmountComma) dt.toAmount = dt.toAmountComma.split(',').join('');
-    dt.toAmount = dt.fromAmount;
     if (dt.id) {
       this.http
         .updateId(this.appApi, this.appApiURL + 'edit', dt, dt.id)
@@ -463,14 +475,68 @@ export class BoxTransactionComponent
     if ($event) this.varBTrx.category = $event.id;
   }
 
-  fromAgentFN($event: any) {
-    this.varBTrx.fromAgent = $event;
-    if ($event) this.varBTrx.fromAgent = $event.id;
+  showFromBalanceSpinner = false;
+  showToBalanceSpinner = false;
+  fromDenar = 0;
+  fromDollar = 0;
+  toDenar = 0;
+  toDollar = 0;
+  showAgentBalance(agentId: number, from = false, to = false) {
+    if (from) {
+      this.showFromBalanceSpinner = true;
+      this.fromDenar = 0;
+      this.fromDollar = 0;
+    }
+    this.http.list("agents", "agent/ballnce/0/" + agentId + "/" + this.cmYear.id).subscribe(
+      (e: any) => {
+        if (from) {
+          this.showFromBalanceSpinner = false;
+          this.fromDenar = e.denar;
+          this.fromDollar = e.dollar;
+          this.showFromBalanceSpinner = false;
+        } else if (to) {
+          this.showToBalanceSpinner = false;
+          this.toDenar = e.denar;
+          this.toDollar = e.dollar;
+        }
+      },
+      () => {
+        if (from) {
+          this.showFromBalanceSpinner = false;
+        } else if (to) {
+          this.showToBalanceSpinner = false;
+        }
+        this.http.showNotification("snackbar-danger", "حدثت مشكلة ");
+      }
+    );
   }
 
+  showFromBalance = false;
+  fromAgentFN($event: any) {
+    this.varBTrx.fromAgent = $event;
+    if ($event)
+      this.varBTrx.fromAgent = $event.id;
+    if (this.varBTrx.fromAgent) {
+      this.showFromBalance = true;
+      this.showAgentBalance(this.varBTrx.fromAgent, true);
+    } else {
+      this.showFromBalance = false;
+    }
+    this.cdr.detectChanges();
+
+  }
+
+  showToBalance = false;
   toAgentFN($event: any) {
     this.varBTrx.toAgent = $event;
     if ($event) this.varBTrx.toAgent = $event.id;
+    if (this.varBTrx.toAgent) {
+      this.showToBalance = true;
+      this.showAgentBalance(this.varBTrx.toAgent, false, true);
+    } else {
+      this.showToBalance = false;
+    }
+    this.cdr.detectChanges();
   }
 
   //  ---------------- pictures

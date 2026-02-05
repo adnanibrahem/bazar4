@@ -196,7 +196,10 @@
                       <mat-cell *matCellDef="let row">
                         <span class="mobile-label"> المبلغ من:</span>
                         <span [style.color]="row.fromAmount < 0 ? 'red' : ''">
-                          {{ row.fromAmount | number }} دع</span
+                          {{ row.fromAmount | number }} 
+                          <span *ngIf="row.fromCurrency === 1">دع</span>
+                          <span *ngIf="row.fromCurrency === 2">$</span>
+                          </span
                         >
                       </mat-cell>
                     </ng-container>
@@ -207,9 +210,11 @@
                       </mat-header-cell>
                       <mat-cell *matCellDef="let row">
                         <span class="mobile-label"> المبلغ الى:</span>
-
                         <span [style.color]="row.toAmount < 0 ? 'red' : ''">
-                          {{ row.toAmount | number }} دع</span
+                          {{ row.toAmount | number }} 
+                          <span *ngIf="row.toCurrency === 1">دع</span>
+                          <span *ngIf="row.toCurrency === 2">$</span>
+                          </span
                         >
                       </mat-cell>
                     </ng-container>
@@ -412,6 +417,20 @@
                               ></app-my-auto-complete>
                             }
                           </div>
+                          @if (showFromBalance) {
+                                <div class="mt-2">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-success fw-bold">رصيد العميل</span>
+                                    @if (showFromBalanceSpinner) {
+                                      <mat-spinner color="accent" [diameter]="20" mode="indeterminate"></mat-spinner>
+                                    } @else {
+                                      <span class="text-success fw-bold">
+                                        {{ fromDenar | number:'1.2-2' }} د.ع | {{ fromDollar | number:'1.2-2' }} $
+                                      </span>
+                                    }
+                                  </div>
+                                </div>
+                              }
                         
                       </div>
 
@@ -464,6 +483,21 @@
                             [disabled]="toAgentEvent.asObservable()"
                             dataKey="title"
                           ></app-my-auto-complete>
+                        }
+
+                        @if (showToBalance) {
+                          <div class="mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <span class="text-success fw-bold">رصيد العميل</span>
+                              @if (showToBalanceSpinner) {
+                                <mat-spinner color="accent" [diameter]="20" mode="indeterminate"></mat-spinner>
+                              } @else {
+                                <span class="text-success fw-bold">
+                                  {{ toDenar | number:'1.2-2' }} د.ع | {{ toDollar | number:'1.2-2' }} $
+                                </span>
+                              }
+                            </div>
+                          </div>
                         }
                       </div>
                       <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 border rounded-2 m-1" >
